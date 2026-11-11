@@ -1,0 +1,30 @@
+# Personal photos
+input/*
+!input/.gitkeep
+
+# Outputs produced (excluding samples)
+output/*
+!output/samples/
+!output/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+web/*.min.js
+
+# IDE and operating system
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
