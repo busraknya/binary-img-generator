@@ -43,8 +43,8 @@ def test_invert_flips_dark_and_light():
     [
         (100, 101, "1"),  # 100 < 101 → dark
         (100, 100, " "),  # 100 < 100 is False → light
-        (100, 99, " "),   # 100 < 99 is False → light
-        (0, 1, "1"),      # 0 < 1 → dark
+        (100, 99, " "),  # 100 < 99 is False → light
+        (0, 1, "1"),  # 0 < 1 → dark
         (255, 255, " "),  # 255 < 255 is False → light
     ],
 )

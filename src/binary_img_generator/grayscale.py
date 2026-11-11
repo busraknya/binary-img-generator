@@ -22,13 +22,9 @@ def to_grayscale(image: np.ndarray) -> np.ndarray:
         ValueError: If the input is not a 3-channel uint8 image.
     """
     if image.ndim != 3 or image.shape[2] != 3:
-        raise ValueError(
-            f"Görsel 3 kanallı (RGB) olmalı. Gelen şekil: {image.shape}"
-        )
+        raise ValueError(f"Görsel 3 kanallı (RGB) olmalı. Gelen şekil: {image.shape}")
     if image.dtype != np.uint8:
-        raise ValueError(
-            f"Görsel verisi uint8 olmalı. Gelen tip: {image.dtype}"
-        )
+        raise ValueError(f"Görsel verisi uint8 olmalı. Gelen tip: {image.dtype}")
 
     # Compute in float32 to avoid integer overflow, then round to nearest.
     weighted = (

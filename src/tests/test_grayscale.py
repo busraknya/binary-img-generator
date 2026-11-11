@@ -9,11 +9,11 @@ from binary_img_generator.grayscale import to_grayscale
 @pytest.mark.parametrize(
     "rgb,expected",
     [
-        ((255, 0, 0), 76),    # pure red   → 0.299 × 255 ≈ 76.2
-        ((0, 255, 0), 150),   # pure green → 0.587 × 255 ≈ 149.7
-        ((0, 0, 255), 29),    # pure blue  → 0.114 × 255 ≈ 29.1
+        ((255, 0, 0), 76),  # pure red   → 0.299 × 255 ≈ 76.2
+        ((0, 255, 0), 150),  # pure green → 0.587 × 255 ≈ 149.7
+        ((0, 0, 255), 29),  # pure blue  → 0.114 × 255 ≈ 29.1
         ((255, 255, 255), 255),  # white
-        ((0, 0, 0), 0),       # black
+        ((0, 0, 0), 0),  # black
         ((128, 128, 128), 128),  # mid-gray stays mid-gray
     ],
 )

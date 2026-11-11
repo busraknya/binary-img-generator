@@ -18,9 +18,7 @@ def _resize_nearest(image: np.ndarray, target_h: int, target_w: int) -> np.ndarr
     return image[y_indices[:, None], x_indices]
 
 
-def _calculate_grid_height(
-    grid_width: int, char_aspect: float, orig_h: int, orig_w: int
-) -> int:
+def _calculate_grid_height(grid_width: int, char_aspect: float, orig_h: int, orig_w: int) -> int:
     """Compute the number of character rows to preserve display aspect ratio.
 
     A monospace character is taller than wide (char_aspect ≈ width/height).
@@ -54,9 +52,7 @@ def to_ascii(
         ValueError: If any parameter is out of range or the image is not 2D.
     """
     if image.ndim != 2:
-        raise ValueError(
-            f"Görsel 2 boyutlu (gri ton) olmalı. Gelen şekil: {image.shape}"
-        )
+        raise ValueError(f"Görsel 2 boyutlu (gri ton) olmalı. Gelen şekil: {image.shape}")
     if not (_MIN_GRID_WIDTH <= grid_width <= _MAX_GRID_WIDTH):
         raise ValueError(
             f"grid_width {_MIN_GRID_WIDTH}-{_MAX_GRID_WIDTH} aralığında olmalı. "
@@ -69,8 +65,7 @@ def to_ascii(
         )
     if not (_MIN_THRESHOLD <= threshold <= _MAX_THRESHOLD):
         raise ValueError(
-            f"threshold {_MIN_THRESHOLD}-{_MAX_THRESHOLD} aralığında olmalı. "
-            f"Gelen: {threshold}"
+            f"threshold {_MIN_THRESHOLD}-{_MAX_THRESHOLD} aralığında olmalı. " f"Gelen: {threshold}"
         )
 
     orig_h, orig_w = image.shape
