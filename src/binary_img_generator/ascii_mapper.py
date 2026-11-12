@@ -2,6 +2,7 @@
 
 import numpy as np
 
+# Parameter ranges from BRD BR-05.
 _MIN_GRID_WIDTH = 40
 _MAX_GRID_WIDTH = 400
 _MIN_CHAR_ASPECT = 0.3
@@ -19,13 +20,9 @@ def _resize_nearest(image: np.ndarray, target_h: int, target_w: int) -> np.ndarr
 
 
 def _calculate_grid_height(grid_width: int, char_aspect: float, orig_h: int, orig_w: int) -> int:
-    """Compute the number of character rows to preserve display aspect ratio.
-
-    A monospace character is taller than wide (char_aspect ≈ width/height).
-    To make the final display match the original image proportions:
-        grid_height = grid_width * char_aspect * (orig_h / orig_w)
-    """
-    return max(1, round(grid_width * char_aspect * orig_h / orig_w))
+    """Compute row count so display aspect ratio matches the source image."""
+    height = round(grid_width * char_aspect * orig_h / orig_w)
+    return max(1, height)
 
 
 def to_ascii(
@@ -72,6 +69,7 @@ def to_ascii(
     grid_height = _calculate_grid_height(grid_width, char_aspect, orig_h, orig_w)
     resized = _resize_nearest(image, grid_height, grid_width)
 
+    # Dark pixels become '1'; light pixels become ' '. invert=True swaps them.
     dark_char = " " if invert else "1"
     light_char = "1" if invert else " "
     char_grid = np.where(resized < threshold, dark_char, light_char)
