@@ -1,6 +1,5 @@
 """Tests for the CLI."""
 
-import pytest
 from PIL import Image
 
 from binary_img_generator.cli import main
