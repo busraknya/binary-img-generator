@@ -1,8 +1,8 @@
 """Map grayscale pixels to binary characters (0/1 or space)."""
 
-from binary_img_generator.dithering import floyd_steinberg
-
 import numpy as np
+
+from binary_img_generator.dithering import floyd_steinberg
 
 # Parameter ranges from BRD BR-05.
 _MIN_GRID_WIDTH = 40

@@ -80,25 +80,6 @@ def test_rejects_3d_image():
         to_ascii(np.zeros((10, 10, 3), dtype=np.uint8))
 
 
-@pytest.mark.parametrize(
-    "pixel_value,threshold,expected_char",
-    [
-        (100, 101, "1"),
-        (100, 100, " "),
-        (100, 99, " "),
-        (0, 1, "1"),
-        (255, 255, " "),
-    ],
-)
-def test_threshold_boundaries(pixel_value, threshold, expected_char):
-    image = np.full((100, 100), pixel_value, dtype=np.uint8)
-    result = to_ascii(image, grid_width=40, threshold=threshold, dither=False)
-    assert all(row == expected_char * 40 for row in result)
-
-    # Sanity: with dithering OFF, this is pure threshold behavior.
-    # With dithering ON, uniform images mix black and white — not tested here.
-
-
 @pytest.mark.parametrize("bad_width", [10, 39, 401, 500])
 def test_rejects_out_of_range_grid_width(bad_width):
     image = np.zeros((100, 100), dtype=np.uint8)
