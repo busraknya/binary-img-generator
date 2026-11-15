@@ -1,5 +1,7 @@
 """Map grayscale pixels to binary characters (0/1 or space)."""
 
+from binary_img_generator.dithering import floyd_steinberg
+
 import numpy as np
 
 # Parameter ranges from BRD BR-05.
@@ -31,6 +33,7 @@ def to_ascii(
     char_aspect: float = 0.5,
     threshold: int = 128,
     invert: bool = False,
+    dither: bool = True,
 ) -> list[str]:
     """Convert a grayscale image to a list of 0/1 string rows.
 
@@ -41,6 +44,7 @@ def to_ascii(
             are taller than wide, typically around 0.5.
         threshold: Pixel values below this become '1', others become ' '.
         invert: When True, flip '1' and ' ' (light background).
+        dither: Apply Floyd-Steinberg before thresholding (default True).
 
     Returns:
         List of equal-length strings; one string per row.
@@ -72,6 +76,10 @@ def to_ascii(
     # Dark pixels become '1'; light pixels become ' '. invert=True swaps them.
     dark_char = " " if invert else "1"
     light_char = "1" if invert else " "
+    if dither:
+        resized = floyd_steinberg(resized, threshold)
+        # After dithering, pixels are exactly 0 or 255.
+        # Apply threshold as before: 0 → '1', 255 → ' '.
     char_grid = np.where(resized < threshold, dark_char, light_char)
 
     return ["".join(row) for row in char_grid]

@@ -47,6 +47,12 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Siyah zemin yerine beyaz zemin kullan",
     )
     parser.add_argument(
+        "--dither",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Floyd-Steinberg dithering (default: on)",
+    )
+    parser.add_argument(
         "--output",
         type=Path,
         default=None,
