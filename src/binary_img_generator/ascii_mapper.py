@@ -1,4 +1,4 @@
-"""Map grayscale pixels to binary characters (0/1 or space)."""
+"""Map grayscale pixels to binary characters (0 or 1)."""
 
 import numpy as np
 
@@ -42,8 +42,8 @@ def to_ascii(
         grid_width: Number of characters per row (40-400).
         char_aspect: Character width/height ratio (0.3-1.0). Monospace fonts
             are taller than wide, typically around 0.5.
-        threshold: Pixel values below this become '1', others become ' '.
-        invert: When True, flip '1' and ' ' (light background).
+        threshold: Pixel values below this become '1', others become '0'.
+        invert: When True, flip '0' and '1' (light background).
         dither: Apply Floyd-Steinberg before thresholding (default True).
 
     Returns:
@@ -73,13 +73,13 @@ def to_ascii(
     grid_height = _calculate_grid_height(grid_width, char_aspect, orig_h, orig_w)
     resized = _resize_nearest(image, grid_height, grid_width)
 
-    # Dark pixels become '1'; light pixels become ' '. invert=True swaps them.
-    dark_char = " " if invert else "1"
-    light_char = "1" if invert else " "
+    # Dark pixels become '1'; light pixels become '0'. invert=True swaps them.
+    dark_char = "0" if invert else "1"
+    light_char = "1" if invert else "0"
     if dither:
         resized = floyd_steinberg(resized, threshold)
         # After dithering, pixels are exactly 0 or 255.
-        # Apply threshold as before: 0 → '1', 255 → ' '.
+        # 0 → dark → '1'; 255 → light → '0'.
     char_grid = np.where(resized < threshold, dark_char, light_char)
 
     return ["".join(row) for row in char_grid]

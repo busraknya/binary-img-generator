@@ -26,26 +26,26 @@ def test_all_black_produces_all_ones():
     assert all(row == "1" * 40 for row in result)
 
 
-def test_all_white_produces_all_spaces():
+def test_all_white_produces_all_zeros():
     image = np.full((100, 100), 255, dtype=np.uint8)
     result = to_ascii(image, grid_width=40)
-    assert all(row == " " * 40 for row in result)
+    assert all(row == "0" * 40 for row in result)
 
 
 def test_invert_flips_dark_and_light():
     black = np.zeros((100, 100), dtype=np.uint8)
     inverted = to_ascii(black, grid_width=40, invert=True)
-    assert all(row == " " * 40 for row in inverted)
+    assert all(row == "0" * 40 for row in inverted)
 
 
 @pytest.mark.parametrize(
     "pixel_value,threshold,expected_char",
     [
-        (100, 101, "1"),  # 100 < 101 → dark
-        (100, 100, " "),  # 100 < 100 is False → light
-        (100, 99, " "),  # 100 < 99 is False → light
-        (0, 1, "1"),  # 0 < 1 → dark
-        (255, 255, " "),  # 255 < 255 is False → light
+        (100, 101, "1"),
+        (100, 100, "0"),
+        (100, 99, "0"),
+        (0, 1, "1"),
+        (255, 255, "0"),
     ],
 )
 def test_threshold_boundaries(pixel_value, threshold, expected_char):
