@@ -1,246 +1,181 @@
 # İş Gereksinimleri Dokümanı
 ## Binary Image Generator
 
-Bu doküman projenin **ne yaptığını** ve **neden yapıldığını** anlatır. Kod detayı
-içermez. Bir arkadaşın "bu proje ne işe yarıyor?" diye sorduğunda bu dokümanı okuması
-yeterli olmalı.
+## 1. Projenin Tanımı
 
----
+Binary Image Generator, kullanıcının yüklediği bir fotoğrafı `0`, `1` ve boşluk karakterlerinden oluşan bir portreye dönüştüren bir araçtır.
 
-## 1. Proje Nedir
+Projenin amacı, fotoğrafları yalnızca siyah-beyaz hâle getirmek değil, fotoğraftaki yüz hatlarını, gölgeleri ve önemli görsel detayları mümkün olduğunca koruyarak estetik bir binary portre oluşturmaktır.
 
-Binary Image Generator, bir fotoğrafı alıp onu **0 ve 1 rakamlarından oluşan bir
-portreye** dönüştüren küçük bir araçtır. Aynı portrenin iki farklı çıktısı vardır:
+Ürün iki kullanım şekli sunar:
 
-1. **PNG dosyası:** Python ile üretilir, diske kaydedilir. Statik görsel.
-2. **Web bileşeni:** Tarayıcıda Canvas üzerinde animasyonla beliren hâli.
+- **Web uygulaması:** Kullanıcı fotoğrafını yükler, dönüştürülmüş portresini görüntüler ve PNG olarak indirir.
+- **Yerel kullanım:** Geliştirici, bilgisayarındaki fotoğrafları komut satırı üzerinden dönüştürerek PNG çıktısı alabilir.
 
-Kısaca: fotoğrafını ver, sana "binary portreni" versin.
+## 2. Projenin Amacı
 
----
+Projenin üç temel amacı vardır:
 
-## 2. Neden Yapıyoruz
+1. **Kullanılabilir bir araç geliştirmek:** Herhangi bir kullanıcının fotoğrafını kolayca binary portreye dönüştürebilmesini sağlamak.
+2. **Kaliteli sonuç üretmek:** Fotoğrafın tanınabilirliğini ve önemli görsel detaylarını koruyan çıktılar oluşturmak.
+3. **Açık kaynak olarak paylaşmak:** Projeyi GitHub üzerinden yayınlayarak başkalarının da kullanabilmesini ve geliştirebilmesini sağlamak.
 
-Üç sebep var, üçü de gerçek:
+## 3. Ürün Kapsamı
 
-1. **Öğrenmek.** Görüntü işleme (fotoğraf → siyah beyaz), algoritmik düşünme
-   (dithering, karakter eşleme) ve frontend (Canvas, animasyon) konularını tek bir
-   projede birleştirmek istiyorum.
-2. **Kullanmak.** Kişisel sitemde sıradan bir fotoğraf yerine, kodla ürettiğim bir
-   portre dursun istiyorum. Yani proje "demo" değil, gerçekten kullanılacak.
-3. **Paylaşmak.** GitHub'da yayınlayınca hem kendi portfolyom için somut bir iş
-   olacak, hem de benzer bir şey yapmak isteyen biri bu repodan faydalanabilecek.
+### 3.1 Kapsam Dahilinde
 
----
+- JPEG, PNG ve WebP formatlarında fotoğraf kabul etmek.
+- Fotoğrafı `0`, `1` ve boşluk karakterlerinden oluşan bir portreye dönüştürmek.
+- Fotoğrafın en-boy oranını mümkün olduğunca korumak.
+- Yüz hatlarını ve önemli görsel detayları korumaya odaklanmak.
+- Kullanıcıya dönüştürülmüş portrenin önizlemesini göstermek.
+- Görsel kalitesini iyileştirmek için temel ayarlar sunmak.
+- Oluşturulan portreyi PNG olarak indirmek.
+- Yerel kullanım için komut satırı üzerinden PNG üretimini desteklemek.
+- Türkçe ve İngilizce anlaşılır kullanım ve hata açıklamaları sağlamak.
+- Projeyi GitHub üzerinde açık kaynak olarak yayınlamak.
 
-## 3. Kapsam
+### 3.2 Kapsam Dışında
 
-### 3.1 Kapsamda Olanlar
+İlk sürümde aşağıdaki özellikler bulunmayacaktır:
 
-- Fotoğrafı siyah-beyaza (gri tona) çevirmek
-- Gri tonlu görüntüyü 0 ve 1 karakterlerinden oluşan bir metin ızgarasına dönüştürmek
-- Dithering uygulamak (görsel detayı artıran bir teknik — Bölüm 5.4'te anlatılıyor)
-- Sonucu PNG olarak kaydetmek
-- Portre "yoğunluğunu" ve karakter boyutunu ayarlayabilmek
-- Aynı portreyi tarayıcıda animasyonlu göstermek
-- Kişisel siteye tek bir `<script>` etiketiyle eklenebilmek
-- GitHub'da açık kaynak olarak yayınlamak
+- Kullanıcı hesabı ve giriş sistemi.
+- Veritabanı ve kullanıcı verilerinin kalıcı olarak saklanması.
+- Fotoğrafların sunucuya yüklenerek işlenmesi.
+- Birden fazla fotoğrafı toplu dönüştürme.
+- Renkli binary portre üretimi.
+- `0` ve `1` dışında farklı karakter setleriyle ASCII sanat üretimi.
+- Mobil uygulama.
+- Kullanıcılar arasında görsel paylaşımı veya sosyal özellikler.
 
-### 3.2 Kapsamda Olmayanlar
+## 4. Kullanıcılar ve Kullanım Amaçları
 
-Bunlar bilinçli olarak **v1'e dahil edilmedi.** "Acaba eklesem mi?" dürtüsüne karşı
-burada dursun:
+| Kullanıcı | İhtiyaç |
+|---|---|
+| Web uygulaması ziyaretçisi | Fotoğraf yükleyip binary portresini oluşturmak ve indirmek. |
+| Geliştirici | Fotoğrafları yerel ortamında dönüştürmek ve projeyi geliştirmek. |
+| GitHub ziyaretçisi | Projeyi incelemek, çalıştırmak ve açık kaynak koddan yararlanmak. |
 
-- Renkli çıktı (sadece siyah-beyaz, tema bu)
-- 0/1 dışında karakter setleri (örn. `@#%*+=-` gibi ASCII sanatı — ayrı bir proje)
-- Kullanıcı hesabı, giriş sistemi (tek kişisel kullanım)
-- Veritabanı (saklanacak bir şey yok)
-- Sunucu tarafı işlem (her şey tarayıcıda veya yerelde çalışır)
-- Mobil uygulama
-- Birden fazla fotoğrafı toplu işleme
+## 5. Ürün Gereksinimleri
 
----
+### 5.1 Fotoğraf Yükleme (BR-01)
 
-## 4. Kim Kullanacak
+Kullanıcı, web uygulamasına veya yerel araca bir fotoğraf sağlayabilmelidir.
 
-| Kim | Ne için | Nerede |
-|-----|---------|--------|
-| **Ben (geliştirici)** | PNG üretmek, siteye gömmek | Kendi bilgisayarım |
-| **Site ziyaretçisi** | Animasyonlu portreyi görmek | Tarayıcıda, sitemde |
-| **Kodu inceleyen biri** | Benzer proje yapmak için örnek almak | GitHub'da |
+- JPEG, PNG ve WebP formatları desteklenmelidir.
+- Desteklenmeyen veya bozuk dosyalar kabul edilmemelidir.
+- Çok küçük veya işlenmesi uygun olmayan görseller için anlaşılır hata mesajı verilmelidir.
+- Fotoğrafın yönü doğru algılanmalıdır.
+- Görselin en-boy oranı korunmalıdır.
 
-v1'de başka kullanıcı yok. Bu yüzden kimlik doğrulama, yetkilendirme gibi şeyler
-kapsam dışı.
+### 5.2 Binary Portre Oluşturma (BR-02)
 
----
+Sistem, yüklenen fotoğrafı `0`, `1` ve boşluk karakterleriyle temsil edilen bir portreye dönüştürmelidir.
 
-## 5. İş Kuralları
+- Üç karakter de görselin farklı tonlarını temsil edebilmelidir.
+- Karakterlerin kullanımı sonucunda fotoğrafın önemli detayları mümkün olduğunca korunmalıdır.
+- Yüz, göz, burun ve ağız gibi belirgin hatların tanınabilir olması hedeflenmelidir.
+- Tüm satırlar tutarlı bir karakter düzenine sahip olmalıdır.
+- Görselin oranı bozulmamalıdır.
 
-Aşağıdaki maddeler "sistem neyi nasıl yapmalı" sorusuna cevap verir. Her biri kod
-yazarken kontrol edilecek bir kural. Kodlayan kişi (yani ben) bu maddelere bakarak
-"buna uyuyor muyum?" diye kontrol edecek.
+Karakterlerin hangi tonlarda kullanılacağı ve en iyi görsel sonucu sağlayan dönüştürme yöntemi teknik tasarım ve test aşamasında belirlenecektir.
 
-### 5.1 Girdi (BR-01)
+### 5.3 Görsel Kalitesi (BR-03)
 
-**Ne:** Kullanıcı bir portre fotoğrafı verir.
+Kaliteli çıktı, ürünün temel gereksinimlerinden biridir.
 
-- Kabul edilen formatlar: **JPEG, PNG, WebP**
-- Minimum boyut: **64×64 piksel.** Daha küçük görseller reddedilir.
-- Reddedilirse **Türkçe** ve anlaşılır hata mesajı verilir.
+Sistem:
 
-**Neden minimum boyut var:** 64×64'ün altındaki görsellerde yüz hatları zaten
-kaybolmuş olur; portre üretmek anlamsız.
+- Fotoğrafın aydınlık ve karanlık bölgelerini ayırt edebilmelidir.
+- Orta tonları mümkün olduğunca başarılı temsil etmelidir.
+- Yüz hatlarının kaybolmasına neden olan aşırı kontrasttan kaçınmalıdır.
+- Görsel detayları korumak için uygun ton dağılımı ve dithering yöntemlerini desteklemelidir.
+- Farklı fotoğraf türlerinde kabul edilebilir sonuçlar üretmelidir.
 
-**Örnek hata mesajı:**
+Varsayılan ayarlar, kullanıcının ek bir işlem yapmasına gerek kalmadan dengeli ve estetik bir sonuç oluşturmayı hedeflemelidir.
 
-```
-Hata: Görsel çok küçük (32×32). En az 64×64 piksel olmalı.
-```
+### 5.4 Görsel Ayarları (BR-04)
 
-### 5.2 Gri Tonlama (BR-02)
+Kullanıcı, oluşturulan portrenin görünümünü iyileştirebilmelidir.
 
-**Ne:** Renkli fotoğraf, siyah-beyaz tonlarına çevrilir.
+İlk sürüm için değerlendirilmesi gereken ayarlar:
 
-Burada standart bir formül kullanılır: **BT.601**. Nedir? Her pikselin kırmızı, yeşil
-ve mavi değerini belirli ağırlıklarla toplayıp tek bir "parlaklık" değeri elde etme
-yöntemi. İnsan gözü yeşile daha duyarlı, maviye daha az duyarlı olduğu için ağırlıklar
-eşit değildir:
+- Parlaklık
+- Kontrast
+- Karakter yoğunluğu / detay seviyesi
+- Dithering açma ve kapatma
+- Açık ve koyu alanların ters çevrilmesi
 
-```
-Parlaklık = 0.299 × Kırmızı + 0.587 × Yeşil + 0.114 × Mavi
-```
+Ayarlar anlaşılır isimlerle sunulmalı ve kullanıcı değişikliklerin sonucunu önizlemede görebilmelidir.
 
-**Neden bu formül:** Her gri tonlama kütüphanesi bunu kullanır. Farklı bir formül
-kullanmak sonucu "yanlış" yapmaz ama standarttan sapar; testlerde de bunu bekleriz.
+### 5.5 Önizleme (BR-05)
 
-**Örnek:** Saf kırmızı bir piksel (`R=255, G=0, B=0`), gri tonda `76` değerini alır.
-Saf yeşil `150`, saf mavi `29`.
-
-### 5.3 Karakter Eşleme (BR-03)
-
-**Ne:** Her piksel, bir karaktere dönüştürülür.
-
-Kural basit: piksel ne kadar koyuysa o kadar "dolu" karakter kullanılır.
-
-- Koyu piksel (parlaklık düşük) → `1`
-- Açık piksel (parlaklık yüksek) → boşluk
-
-**Neden sadece 0 ve 1:** Projenin teması "binary". 0/1 kullanmak estetik bir tercih,
-aynı zamanda başlıkla uyumlu.
-
-**Satır uzunluğu:** Tüm satırlar **eşit uzunlukta** olmalı. Aksi halde görüntü
-bozulur. Görselin en-boy oranı korunur: geniş bir fotoğraf geniş bir metin ızgarası
-üretir.
-
-### 5.4 Dithering (BR-04)
-
-**Dithering nedir:** Gri tonlu bir görüntüyü sadece siyah-beyaz ile göstermeye
-çalıştığımızda, orta tonlar kaybolur ve "bantlar" oluşur. Dithering, bu bantları
-kırmak için piksellerin siyah mı beyaz mı olacağına karar verirken **hatanın bir
-kısmını komşu piksellere yayar.** Sonuç: göz, gri tonları "noktacıklardan" algılar.
-
-Kullandığımız algoritma: **Floyd–Steinberg.** En yaygın dithering algoritması.
-Bir pikselin siyah mı beyaz mı olacağına karar verirken oluşan "hata"yı 4 komşu
-piksele belirli oranlarda paylaştırır.
-
-**Kural:**
-
-- Dithering **açılıp kapatılabilir** (varsayılan: açık).
-- Kapalıyken basit eşikleme (threshold) kullanılır: parlaklık `128`'in altındaysa
-  siyah, üstündeyse beyaz.
-
-**Neden opsiyonel:** Bazı fotoğraflarda dithering "gürültülü" görünebilir. Kullanıcı
-kapatabilsin.
-
-### 5.5 Ayarlanabilir Parametreler (BR-05)
-
-Kullanıcı şu değerleri değiştirebilir:
-
-| Parametre | Ne işe yarar | Varsayılan | Aralık |
-|-----------|--------------|------------|--------|
-| `grid_width` | Metin portresinin kaç karakter genişliğinde olacağı | 120 | 40–400 |
-| `char_aspect` | Karakterin en/boy oranı | 0.5 | 0.3–1.0 |
-| `threshold` | Siyah/beyaz eşiği (dithering kapalıyken) | 128 | 0–255 |
-| `dither` | Dithering açık mı kapalı mı | `true` | `true`/`false` |
-| `invert` | 0 ve 1'lerin yerini değiştir | `false` | `true`/`false` |
-
-**`grid_width` örneği:** `grid_width=120` dersen çıktı 120 karakter genişliğinde olur.
-Daha büyük değer = daha detaylı ama daha yavaş. `40` çok kaba, `400` çok yavaş.
-
-**`char_aspect` örneği:** Monospace fontlarda bir karakterin yüksekliği genişliğinden
-fazladır. Bu yüzden 1 piksel yüksekliği, 1 piksel genişliğine eşit değildir. `0.5`
-demek "her karakter, 2 piksel genişliğinde 1 piksel yüksekliğinde" gibi düşünülebilir.
-Ayarı bozarsan görüntü ezilir veya gerilir.
-
-**Kural:** Geçersiz değer gelirse (örn. `grid_width=10` çünkü minimum 40), Türkçe hata
-mesajı verilir. Sessizce düzeltilmez.
+- Kullanıcı dönüştürülmüş portresini web uygulamasında görebilmelidir.
+- Ayarlarda yapılan değişiklikler önizlemeye yansıtılmalıdır.
+- Önizleme, indirilecek PNG ile aynı görsel sonucu temsil etmelidir.
+- Kullanıcı isterse başlangıç ayarlarına dönebilmelidir.
 
 ### 5.6 PNG Çıktısı (BR-06)
 
-**Ne:** Sonuç bir PNG dosyası olarak kaydedilir.
+- Oluşturulan portre PNG formatında indirilebilmelidir.
+- Çıktı yüksek çözünürlüklü olmalıdır.
+- Görselin en-boy oranı korunmalıdır.
+- Arka plan ve karakter renkleri okunabilir olmalıdır.
+- Kullanıcının özel fotoğraf bilgileri veya EXIF verileri çıktı dosyasına taşınmamalıdır.
+- İndirilen dosya, önizlemede görülen karakter düzeniyle tutarlı olmalıdır.
 
-- **Çözünürlük:** En az `1200×1200` piksel.
-- **Font:** Monospace (eşit genişlikli) olmalı.
-- **Arka plan:** Siyah zemin + beyaz karakter (varsayılan) veya tersi.
-- **Dosya adı:** `portre_<zaman>.png` formatı. Örnek: `portre_20261111_1430.png`.
-- **Meta veri:** Kaynak fotoğrafın EXIF bilgileri (GPS, kamera modeli vb.)
-  **taşınmaz.** Bu bilinçli bir gizlilik kararı.
+### 5.7 Gizlilik (BR-07)
 
-### 5.7 Web Bileşeni (BR-07)
+- Kullanıcının fotoğrafı izni olmadan başka bir yerde saklanmamalıdır.
+- Fotoğrafın işlenmesi için sunucuya gönderilmesi gerekmemelidir.
+- Kullanıcı fotoğrafı üzerinde işlem yaparken gizliliği korunmalıdır.
+- Kullanıcı hesabı veya veritabanı gerektiren bir işlem bulunmamalıdır.
 
-**Ne:** Aynı portre, tarayıcıda animasyonla belirir.
+### 5.8 Yerel Kullanım (BR-08)
 
-- Canvas üzerinde çizilir (HTML5 Canvas API).
-- **Animasyon:** Karakterler **soldan sağa sırayla** belirir.
-- **`prefers-reduced-motion` desteği:** Kullanıcı işletim sistemi ayarlarında
-  "hareketi azalt" seçtiyse animasyon otomatik olarak **kapanır**, portre statik
-  gösterilir.
+Geliştirici, projeyi kendi bilgisayarında çalıştırarak fotoğrafları PNG formatında dönüştürebilmelidir.
 
-**Neden soldan sağa:** Soldan sağa okuma yönüyle uyumlu olduğu için seçildi.
+- İşlem tek bir komutla başlatılabilmelidir.
+- Kullanıcı giriş dosyasını ve desteklenen ayarları belirleyebilmelidir.
+- Oluşturulan çıktı belirtilen klasöre kaydedilmelidir.
+- Hatalı girişlerde anlaşılır hata mesajı verilmelidir.
 
-### 5.8 Siteye Gömme (BR-08)
+### 5.9 Açık Kaynak Yayını (BR-09)
 
-- Tek bir `<script>` etiketi + tek bir `<canvas>` ile çalışmalı.
-- **Sayfayı bloklamamalı:** `defer` özniteliğiyle yüklenmeli.
-- Harici kütüphane gerektirmemeli (vanilla JS).
+GitHub deposunda aşağıdakiler bulunmalıdır:
 
-**Neden harici kütüphane yok:** Kişisel siteye "tek dosya" olarak eklenmeli.
+- Projeyi açıklayan README.
+- Kurulum ve çalıştırma talimatları.
+- Kullanım örnekleri.
+- Örnek binary portre çıktıları.
+- Açık kaynak lisansı.
 
-### 5.9 Yayın (BR-09)
+## 6. Başarı ve Kabul Kriterleri
 
-GitHub'da yayınlanırken şunlar olmalı:
+İlk sürümün tamamlanmış sayılması için:
 
-- `README.md` — projeyi tanıtan, çalıştırma adımlarını içeren
-- `LICENSE` — MIT önerilir
-- En az 3 örnek çıktı (`output/samples/` altında)
-
----
-
-## 6. Bitmiş Sayılma Kriterleri
-
-v1 tamamlandı diyebilmem için **hepsi** doğru olmalı:
-
-- [ ] Bir fotoğrafı tek komutla PNG'ye çevirebiliyorum.
-- [ ] Çıktıya baktığımda yüz hatları tanınıyor.
-- [ ] Dithering açık ve kapalı arasındaki fark net görülüyor.
-- [ ] Geçersiz parametre verdiğimde Türkçe hata alıyorum.
-- [ ] Web bileşeni kişisel sitemde çalışıyor.
-- [ ] `prefers-reduced-motion` açıkken animasyon duruyor.
-- [ ] README'yi sıfırdan takip eden biri 30 dakikada çalıştırabiliyor.
-- [ ] GitHub'da en az 3 örnek çıktı var.
-
----
+- [ ] Kullanıcı JPEG, PNG veya WebP fotoğrafı yükleyebilmelidir.
+- [ ] Sistem fotoğrafı `0`, `1` ve boşluk karakterleriyle dönüştürebilmelidir.
+- [ ] Oluşturulan portrede yüz hatları mümkün olduğunca tanınabilir olmalıdır.
+- [ ] Farklı ışık ve kontrast koşullarındaki fotoğraflarda kabul edilebilir sonuç alınmalıdır.
+- [ ] Kullanıcı temel görsel ayarlarını değiştirebilmelidir.
+- [ ] Önizleme yapılan değişiklikleri doğru göstermelidir.
+- [ ] Kullanıcı sonucu yüksek çözünürlüklü PNG olarak indirebilmelidir.
+- [ ] Önizleme ve indirilen dosya birbiriyle tutarlı olmalıdır.
+- [ ] Fotoğraflar sunucuya gönderilmeden işlenebilmelidir.
+- [ ] Geçersiz dosyalarda anlaşılır hata mesajları verilmelidir.
+- [ ] Yerel kullanım komut satırı üzerinden çalışmalıdır.
+- [ ] README, projeyi yeni bir kullanıcının kurup çalıştırmasına yetecek açıklıkta olmalıdır.
 
 ## 7. Terimler Sözlüğü
 
-| Terim | Anlamı |
-|-------|--------|
-| **Gri ton (grayscale)** | Siyah ile beyaz arasındaki tonlar. Her pikselin tek bir parlaklık değeri vardır (0–255). |
-| **BT.601** | Gri tona çevirmede kullanılan standart ağırlık formülü. |
-| **Eşikleme (threshold)** | Bir değeri siyah mı beyaz mı sayacağımıza karar veren sınır. |
-| **Dithering** | Gri tonları siyah-beyaz noktalarla taklit etme tekniği. |
-| **Floyd–Steinberg** | En yaygın dithering algoritması; hatayı komşu piksellere yayar. |
-| **Monospace** | Her karakterin aynı genişlikte olduğu font. |
-| **Canvas** | Tarayıcıda piksel piksel çizim yapmaya izin veren HTML5 API'si. |
-| **EXIF** | Fotoğrafın içine gömülü meta bilgi (çekim tarihi, GPS, kamera modeli vb.). |
-| **MVP** | Minimum Uygulanabilir Ürün — çalışan en basit hâl. |
+| Terim | Açıklama |
+|---|---|
+| Binary portre | Bir fotoğrafın 0 ve 1 gibi karakterlerle temsil edilen görsel hâli. |
+| Grayscale | Fotoğrafın renklerden arındırılarak gri tonlarla temsil edilmesi. |
+| Karakter yoğunluğu | Kullanılan karakterlerin görselde oluşturduğu koyuluk ve doluluk seviyesi. |
+| Dithering | Ara tonları küçük desenlerle temsil ederek görsel detayları korumaya yardımcı olan teknik. |
+| Önizleme | Kullanıcının indirmeden önce oluşturulan sonucu görebildiği alan. |
+| PNG | Kayıpsız görsel dosyası formatı. |
+| EXIF | Fotoğraflarda bulunabilen çekim tarihi, konum ve kamera bilgileri gibi meta veriler. |
+| MVP | Ürünün temel ihtiyaçları karşılayan ilk kullanılabilir sürümü. |
