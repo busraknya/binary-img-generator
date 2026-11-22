@@ -6,6 +6,7 @@ from datetime import datetime
 from pathlib import Path
 
 from binary_img_generator.ascii_mapper import to_ascii
+from binary_img_generator.contrast import auto_contrast
 from binary_img_generator.grayscale import to_grayscale
 from binary_img_generator.image_loader import load_image
 from binary_img_generator.png_exporter import export_png
@@ -47,6 +48,11 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Siyah zemin yerine beyaz zemin kullan",
     )
     parser.add_argument(
+        "--auto-contrast",
+        action="store_true",
+        help="Fotoğrafın gri tonlarını 0-255'e ger (kontrast artırır)",
+    )
+    parser.add_argument(
         "--dither",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -68,12 +74,15 @@ def main(argv: list[str] | None = None) -> int:
     try:
         img = load_image(args.input)
         gray = to_grayscale(img)
+        if args.auto_contrast:
+            gray = auto_contrast(gray)
         art = to_ascii(
             gray,
             grid_width=args.grid_width,
             char_aspect=args.char_aspect,
             threshold=args.threshold,
             invert=args.invert,
+            dither=args.dither,
         )
         export_png(art, output_path)
     except (FileNotFoundError, ValueError) as exc:

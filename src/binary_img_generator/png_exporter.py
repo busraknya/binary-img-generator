@@ -4,9 +4,9 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-# Font size in pixels. At 20px with monospace, 120 chars ≈ 1440px wide,
+# Font size in pixels. At 28px with monospace, 120 chars ≈ 1680px wide,
 # which satisfies BR-06 (min 1200px output).
-FONT_SIZE = 20
+FONT_SIZE = 28
 
 # Common monospace font paths. First one that loads wins.
 _FONT_CANDIDATES = [

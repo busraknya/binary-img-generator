@@ -22,30 +22,30 @@ def test_all_rows_same_length():
 
 def test_all_black_produces_all_ones():
     image = np.zeros((100, 100), dtype=np.uint8)
-    result = to_ascii(image, grid_width=40)
+    result = to_ascii(image, grid_width=40, dither=False)
     assert all(row == "1" * 40 for row in result)
 
 
-def test_all_white_produces_all_zeros():
+def test_all_white_produces_all_spaces():
     image = np.full((100, 100), 255, dtype=np.uint8)
-    result = to_ascii(image, grid_width=40)
-    assert all(row == "0" * 40 for row in result)
+    result = to_ascii(image, grid_width=40, dither=False)
+    assert all(row == " " * 40 for row in result)
 
 
 def test_invert_flips_dark_and_light():
     black = np.zeros((100, 100), dtype=np.uint8)
-    inverted = to_ascii(black, grid_width=40, invert=True)
-    assert all(row == "0" * 40 for row in inverted)
+    inverted = to_ascii(black, grid_width=40, invert=True, dither=False)
+    assert all(row == " " * 40 for row in inverted)
 
 
 @pytest.mark.parametrize(
     "pixel_value,threshold,expected_char",
     [
         (100, 101, "1"),
-        (100, 100, "0"),
-        (100, 99, "0"),
+        (100, 100, " "),
+        (100, 99, " "),
         (0, 1, "1"),
-        (255, 255, "0"),
+        (255, 255, " "),
     ],
 )
 def test_threshold_boundaries(pixel_value, threshold, expected_char):
@@ -55,21 +55,18 @@ def test_threshold_boundaries(pixel_value, threshold, expected_char):
 
 
 def test_grid_height_preserves_aspect_square():
-    """Square input with char_aspect=0.5 → half the rows (100×0.5 = 50)."""
     image = np.full((100, 100), 128, dtype=np.uint8)
     result = to_ascii(image, grid_width=100, char_aspect=0.5)
     assert len(result) == 50
 
 
 def test_grid_height_preserves_aspect_wide():
-    """2:1 wide input → quarter rows (100 × 0.5 × 50/100 = 25)."""
     image = np.full((50, 100), 128, dtype=np.uint8)
     result = to_ascii(image, grid_width=100, char_aspect=0.5)
     assert len(result) == 25
 
 
 def test_grid_height_minimum_one():
-    """Very wide inputs should still produce at least 1 row."""
     image = np.full((1, 1000), 128, dtype=np.uint8)
     result = to_ascii(image, grid_width=40, char_aspect=0.3)
     assert len(result) >= 1
