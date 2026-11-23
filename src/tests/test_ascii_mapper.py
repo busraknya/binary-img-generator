@@ -16,42 +16,60 @@ def test_output_is_list_of_strings():
 def test_all_rows_same_length():
     image = np.full((100, 100), 128, dtype=np.uint8)
     result = to_ascii(image, grid_width=80)
-    lengths = {len(row) for row in result}
-    assert lengths == {80}
+    assert {len(row) for row in result} == {80}
 
 
-def test_all_black_produces_all_ones():
+def test_all_black_produces_spaces():
     image = np.zeros((100, 100), dtype=np.uint8)
     result = to_ascii(image, grid_width=40, dither=False)
-    assert all(row == "1" * 40 for row in result)
+    assert all(row == " " * 40 for row in result)
 
 
-def test_all_white_produces_all_spaces():
+def test_all_white_produces_zeros():
     image = np.full((100, 100), 255, dtype=np.uint8)
     result = to_ascii(image, grid_width=40, dither=False)
-    assert all(row == " " * 40 for row in result)
+    assert all(row == "0" * 40 for row in result)
+
+
+def test_mid_gray_uses_middle_density_character():
+    image = np.full((100, 100), 128, dtype=np.uint8)
+    result = to_ascii(image, grid_width=40, dither=False)
+    assert all(row == "1" * 40 for row in result)
 
 
 def test_invert_flips_dark_and_light():
     black = np.zeros((100, 100), dtype=np.uint8)
     inverted = to_ascii(black, grid_width=40, invert=True, dither=False)
-    assert all(row == " " * 40 for row in inverted)
+    assert all(row == "0" * 40 for row in inverted)
 
 
 @pytest.mark.parametrize(
     "pixel_value,threshold,expected_char",
     [
-        (100, 101, "1"),
-        (100, 100, " "),
-        (100, 99, " "),
-        (0, 1, "1"),
-        (255, 255, " "),
+        (0, 0, " "),
+        (255, 0, "0"),
+        (0, 255, " "),
+        (255, 255, "0"),
     ],
 )
-def test_threshold_boundaries(pixel_value, threshold, expected_char):
+def test_threshold_endpoints_preserve_black_and_white(pixel_value, threshold, expected_char):
     image = np.full((100, 100), pixel_value, dtype=np.uint8)
     result = to_ascii(image, grid_width=40, threshold=threshold, dither=False)
     assert all(row == expected_char * 40 for row in result)
+
+
+def test_threshold_moves_selected_gray_to_middle():
+    image = np.full((100, 100), 100, dtype=np.uint8)
+    result = to_ascii(image, grid_width=40, threshold=100, dither=False)
+    assert all(row == "1" * 40 for row in result)
+
+
+def test_threshold_changes_relative_tone_mapping():
+    image = np.full((100, 100), 80, dtype=np.uint8)
+    darker_midpoint = to_ascii(image, grid_width=40, threshold=160, dither=False)
+    lighter_midpoint = to_ascii(image, grid_width=40, threshold=100, dither=False)
+    assert all(row == " " * 40 for row in darker_midpoint)
+    assert all(row == "1" * 40 for row in lighter_midpoint)
 
 
 def test_grid_height_preserves_aspect_square():
