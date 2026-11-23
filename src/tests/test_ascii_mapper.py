@@ -114,3 +114,36 @@ def test_rejects_out_of_range_threshold(bad_threshold):
     image = np.zeros((100, 100), dtype=np.uint8)
     with pytest.raises(ValueError, match="threshold"):
         to_ascii(image, threshold=bad_threshold)
+
+
+def test_area_resize_uses_average_of_source_regions():
+    from binary_img_generator.ascii_mapper import _resize_area
+
+    image = np.array(
+        [
+            [0, 0, 100, 100],
+            [0, 0, 100, 100],
+            [200, 200, 255, 255],
+            [200, 200, 255, 255],
+        ],
+        dtype=np.uint8,
+    )
+
+    result = _resize_area(image, target_h=2, target_w=2)
+
+    np.testing.assert_array_equal(result, np.array([[0, 100], [200, 255]], dtype=np.uint8))
+
+
+def test_to_ascii_accepts_area_resize_method():
+    image = np.arange(10000, dtype=np.uint8).reshape(100, 100)
+    result = to_ascii(image, grid_width=40, resize_method="area", dither=False)
+
+    assert len(result) == 20
+    assert all(len(row) == 40 for row in result)
+
+
+def test_to_ascii_rejects_unknown_resize_method():
+    image = np.zeros((100, 100), dtype=np.uint8)
+
+    with pytest.raises(ValueError, match="resize_method"):
+        to_ascii(image, grid_width=40, resize_method="unknown")
