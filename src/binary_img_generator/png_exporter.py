@@ -50,10 +50,7 @@ def get_character_palette() -> tuple[tuple[str, int], ...]:
     if max_density <= 0:
         raise RuntimeError("Karakter yoğunluğu ölçülemedi.")
 
-    palette = [
-        (character, round((density / max_density) * 255))
-        for character, density in measured
-    ]
+    palette = [(character, round((density / max_density) * 255)) for character, density in measured]
 
     # Keep levels distinct even if a font renders two glyphs almost equally.
     levels = [level for _, level in palette]

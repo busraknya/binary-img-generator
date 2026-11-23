@@ -39,9 +39,7 @@ def _adjust_midpoint(image: np.ndarray, threshold: int) -> np.ndarray:
     adjusted = np.empty_like(values)
     lower = values <= threshold
     adjusted[lower] = values[lower] * (128.0 / threshold)
-    adjusted[~lower] = 128.0 + (values[~lower] - threshold) * (
-        127.0 / (255 - threshold)
-    )
+    adjusted[~lower] = 128.0 + (values[~lower] - threshold) * (127.0 / (255 - threshold))
     return np.clip(np.rint(adjusted), 0, 255).astype(np.uint8)
 
 
@@ -83,8 +81,7 @@ def to_ascii(
         )
     if not (_MIN_THRESHOLD <= threshold <= _MAX_THRESHOLD):
         raise ValueError(
-            f"threshold {_MIN_THRESHOLD}-{_MAX_THRESHOLD} aralığında olmalı. "
-            f"Gelen: {threshold}"
+            f"threshold {_MIN_THRESHOLD}-{_MAX_THRESHOLD} aralığında olmalı. " f"Gelen: {threshold}"
         )
 
     orig_h, orig_w = image.shape
