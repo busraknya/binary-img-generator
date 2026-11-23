@@ -5,10 +5,12 @@ import itertools
 import numpy as np
 from PIL import Image, ImageDraw
 
-from binary_img_generator.png_exporter import FONT_SIZE, _load_monospace_font
-
 from binary_img_generator.dithering import floyd_steinberg
-from binary_img_generator.png_exporter import get_character_palette
+from binary_img_generator.png_exporter import (
+    FONT_SIZE,
+    _load_monospace_font,
+    get_character_palette,
+)
 
 # Parameter ranges from BRD BR-05.
 _MIN_GRID_WIDTH = 40
@@ -55,7 +57,6 @@ def _adjust_midpoint(image: np.ndarray, threshold: int) -> np.ndarray:
     adjusted[lower] = values[lower] * (128.0 / threshold)
     adjusted[~lower] = 128.0 + (values[~lower] - threshold) * (127.0 / (255 - threshold))
     return np.clip(np.rint(adjusted), 0, 255).astype(np.uint8)
-
 
 
 def _to_ascii_glyph(
