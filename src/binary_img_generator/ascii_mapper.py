@@ -154,12 +154,15 @@ def to_ascii(
 
     orig_h, orig_w = image.shape
     grid_height = _calculate_grid_height(grid_width, char_aspect, orig_h, orig_w)
+    if mapping_method == "glyph":
+        # Keep the original image detail until it is resized to the final
+        # rendered character-grid dimensions inside the glyph matcher.
+        return _to_ascii_glyph(image, grid_width, grid_height, invert)
+
     if resize_method == "area":
         resized = _resize_area(image, grid_height, grid_width)
     else:
         resized = _resize_nearest(image, grid_height, grid_width)
-    if mapping_method == "glyph":
-        return _to_ascii_glyph(resized, grid_width, grid_height, invert)
 
     resized = _adjust_midpoint(resized, threshold)
 
