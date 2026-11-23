@@ -59,6 +59,12 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Floyd-Steinberg dithering (default: on)",
     )
     parser.add_argument(
+        "--mapping-method",
+        choices=("density", "glyph"),
+        default="density",
+        help="Character mapping: density or rendered glyph matching (default: density)",
+    )
+    parser.add_argument(
         "--resize-method",
         choices=("nearest", "area"),
         default="nearest",
@@ -90,6 +96,7 @@ def main(argv: list[str] | None = None) -> int:
             invert=args.invert,
             dither=args.dither,
             resize_method=args.resize_method,
+            mapping_method=args.mapping_method,
         )
         export_png(art, output_path)
     except (FileNotFoundError, ValueError) as exc:
