@@ -3,7 +3,9 @@
 import itertools
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw
+
+from binary_img_generator.png_exporter import FONT_SIZE, _load_monospace_font
 
 from binary_img_generator.dithering import floyd_steinberg
 from binary_img_generator.png_exporter import get_character_palette
@@ -16,6 +18,7 @@ _MAX_CHAR_ASPECT = 1.0
 _MIN_THRESHOLD = 0
 _MAX_THRESHOLD = 255
 _RESIZE_METHODS = {"nearest", "area"}
+_MAPPING_METHODS = {"density", "glyph"}
 
 
 def _resize_nearest(image: np.ndarray, target_h: int, target_w: int) -> np.ndarray:
@@ -54,6 +57,50 @@ def _adjust_midpoint(image: np.ndarray, threshold: int) -> np.ndarray:
     return np.clip(np.rint(adjusted), 0, 255).astype(np.uint8)
 
 
+
+def _to_ascii_glyph(
+    image: np.ndarray,
+    grid_width: int,
+    grid_height: int,
+    invert: bool,
+) -> list[str]:
+    """Choose the rendered glyph that best matches each source image cell."""
+    font = _load_monospace_font(FONT_SIZE)
+    char_width = max(1, int(np.ceil(font.getlength("M"))))
+    char_height = int(FONT_SIZE * 1.2)
+
+    target = Image.fromarray(image.astype(np.uint8)).resize(
+        (grid_width * char_width, grid_height * char_height),
+        resample=Image.Resampling.BOX,
+    )
+    target_array = np.asarray(target, dtype=np.float32)
+    if invert:
+        target_array = 255.0 - target_array
+
+    characters = (" ", "1", "0")
+    masks = []
+    for character in characters:
+        cell = Image.new("L", (char_width, char_height), 0)
+        ImageDraw.Draw(cell).text((0, 0), character, fill=255, font=font)
+        masks.append(np.asarray(cell, dtype=np.float32))
+
+    mask_array = np.stack(masks)
+    output = np.empty((grid_height, grid_width), dtype="<U1")
+
+    for row in range(grid_height):
+        y_start = row * char_height
+        for col in range(grid_width):
+            x_start = col * char_width
+            patch = target_array[
+                y_start : y_start + char_height,
+                x_start : x_start + char_width,
+            ]
+            errors = np.mean((mask_array - patch[None, :, :]) ** 2, axis=(1, 2))
+            output[row, col] = characters[int(np.argmin(errors))]
+
+    return ["".join(row) for row in output]
+
+
 def to_ascii(
     image: np.ndarray,
     grid_width: int = 120,
@@ -62,6 +109,7 @@ def to_ascii(
     invert: bool = False,
     dither: bool = True,
     resize_method: str = "nearest",
+    mapping_method: str = "density",
 ) -> list[str]:
     """Convert a grayscale image to rows of 0, 1 and space characters.
 
@@ -72,7 +120,8 @@ def to_ascii(
         threshold: Grayscale value mapped to the middle tone (default 128).
         invert: Reverse the character-density mapping.
         dither: Apply Floyd-Steinberg dithering (default True).
-        resize_method: "nearest" for the existing sampler or "area" for box resampling.
+        resize_method: "nearest" for point sampling or "area" for box resampling.
+        mapping_method: "density" for tone mapping or "glyph" for rendered-shape matching.
 
     Returns:
         List of equal-length strings; one string per row.
@@ -96,6 +145,8 @@ def to_ascii(
         raise ValueError(
             f"threshold {_MIN_THRESHOLD}-{_MAX_THRESHOLD} aralığında olmalı. " f"Gelen: {threshold}"
         )
+    if mapping_method not in _MAPPING_METHODS:
+        raise ValueError("mapping_method must be density or glyph")
     if resize_method not in _RESIZE_METHODS:
         raise ValueError(
             f"resize_method şu değerlerden biri olmalı: {', '.join(sorted(_RESIZE_METHODS))}"
@@ -107,6 +158,9 @@ def to_ascii(
         resized = _resize_area(image, grid_height, grid_width)
     else:
         resized = _resize_nearest(image, grid_height, grid_width)
+    if mapping_method == "glyph":
+        return _to_ascii_glyph(resized, grid_width, grid_height, invert)
+
     resized = _adjust_midpoint(resized, threshold)
 
     palette = get_character_palette()
