@@ -59,6 +59,12 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Floyd-Steinberg dithering (default: on)",
     )
     parser.add_argument(
+        "--resize-method",
+        choices=("nearest", "area"),
+        default="nearest",
+        help="Image resizing method: nearest or area (default: nearest)",
+    )
+    parser.add_argument(
         "--output",
         type=Path,
         default=None,
@@ -83,6 +89,7 @@ def main(argv: list[str] | None = None) -> int:
             threshold=args.threshold,
             invert=args.invert,
             dither=args.dither,
+            resize_method=args.resize_method,
         )
         export_png(art, output_path)
     except (FileNotFoundError, ValueError) as exc:
