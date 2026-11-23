@@ -43,6 +43,12 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Orta ton eşiği (0-255, varsayılan 128)",
     )
     parser.add_argument(
+        "--resize-method",
+        choices=("area", "nearest"),
+        default="area",
+        help="Küçültme yöntemi (varsayılan: area)",
+    )
+    parser.add_argument(
         "--invert",
         action="store_true",
         help="Karakter yoğunluklarını tersine çevir",
@@ -83,6 +89,7 @@ def main(argv: list[str] | None = None) -> int:
             threshold=args.threshold,
             invert=args.invert,
             dither=args.dither,
+            resize_method=args.resize_method,
         )
         export_png(art, output_path)
     except (FileNotFoundError, ValueError) as exc:
