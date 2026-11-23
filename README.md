@@ -57,7 +57,7 @@ source .venv/bin/activate
 
 ```powershell
 python -m venv .venv
-.venv\\Scripts\\Activate.ps1
+.venv\Scripts\Activate.ps1
 ```
 
 Install the project and its packages:
@@ -215,7 +215,7 @@ source .venv/bin/activate
 
 ```powershell
 python -m venv .venv
-.venv\\Scripts\\Activate.ps1
+.venv\Scripts\Activate.ps1
 ```
 
 Projeyi ve gerekli paketleri yükleyin:
