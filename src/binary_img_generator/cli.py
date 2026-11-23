@@ -6,7 +6,11 @@ from datetime import datetime
 from pathlib import Path
 
 from binary_img_generator.ascii_mapper import to_ascii
-from binary_img_generator.contrast import auto_contrast, equalize_histogram
+from binary_img_generator.contrast import (
+    auto_contrast,
+    equalize_histogram,
+    percentile_contrast,
+)
 from binary_img_generator.grayscale import to_grayscale
 from binary_img_generator.image_loader import load_image
 from binary_img_generator.png_exporter import export_png
@@ -58,6 +62,11 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Histogram eşitleme uygula (ton dağılımını dengeler)",
     )
     parser.add_argument(
+        "--percentile-contrast",
+        action="store_true",
+        help="Uç değerleri sınırlayarak kontrastı artır (1-99 yüzdelik)",
+    )
+    parser.add_argument(
         "--dither",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -89,12 +98,22 @@ def main(argv: list[str] | None = None) -> int:
     output_path = args.output or _default_output_path()
 
     try:
+        contrast_options = (
+            args.auto_contrast,
+            args.equalize,
+            args.percentile_contrast,
+        )
+        if sum(contrast_options) > 1:
+            raise ValueError("Kontrast seçeneklerinden yalnızca biri kullanılabilir.")
+
         img = load_image(args.input)
         gray = to_grayscale(img)
         if args.auto_contrast:
             gray = auto_contrast(gray)
-        if args.equalize:
+        elif args.equalize:
             gray = equalize_histogram(gray)
+        elif args.percentile_contrast:
+            gray = percentile_contrast(gray)
         art = to_ascii(
             gray,
             grid_width=args.grid_width,
