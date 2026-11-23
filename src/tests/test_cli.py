@@ -29,6 +29,30 @@ def test_equalize_option(tmp_path):
     assert out_path.exists()
 
 
+def test_percentile_contrast_option(tmp_path):
+    img_path = _make_test_image(tmp_path)
+    out_path = tmp_path / "percentile.png"
+    code = main(
+        [
+            str(img_path),
+            "--output",
+            str(out_path),
+            "--grid-width",
+            "40",
+            "--percentile-contrast",
+        ]
+    )
+    assert code == 0
+    assert out_path.exists()
+
+
+def test_contrast_options_cannot_be_combined(tmp_path, capsys):
+    img_path = _make_test_image(tmp_path)
+    code = main([str(img_path), "--auto-contrast", "--equalize"])
+    assert code == 1
+    assert "yalnızca biri" in capsys.readouterr().err
+
+
 def test_default_output_when_omitted(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     img_path = _make_test_image(tmp_path)
