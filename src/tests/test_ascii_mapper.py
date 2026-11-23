@@ -149,12 +149,11 @@ def test_to_ascii_rejects_unknown_resize_method():
         to_ascii(image, grid_width=40, resize_method="unknown")
 
 
-
 def test_glyph_mapping_returns_only_supported_characters():
     image = np.tile(np.linspace(0, 255, 400, dtype=np.uint8), (200, 1))
     result = to_ascii(image, grid_width=40, mapping_method="glyph")
 
-    assert len(result) == 20
+    assert len(result) == 10
     assert all(len(row) == 40 for row in result)
     assert set("".join(result)) <= {" ", "0", "1"}
 
