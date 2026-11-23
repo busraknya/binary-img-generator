@@ -147,3 +147,31 @@ def test_to_ascii_rejects_unknown_resize_method():
 
     with pytest.raises(ValueError, match="resize_method"):
         to_ascii(image, grid_width=40, resize_method="unknown")
+
+
+
+def test_glyph_mapping_returns_only_supported_characters():
+    image = np.tile(np.linspace(0, 255, 400, dtype=np.uint8), (200, 1))
+    result = to_ascii(image, grid_width=40, mapping_method="glyph")
+
+    assert len(result) == 20
+    assert all(len(row) == 40 for row in result)
+    assert set("".join(result)) <= {" ", "0", "1"}
+
+
+def test_glyph_mapping_handles_uniform_black_and_white():
+    black = np.zeros((100, 100), dtype=np.uint8)
+    white = np.full((100, 100), 255, dtype=np.uint8)
+
+    black_result = to_ascii(black, grid_width=40, mapping_method="glyph")
+    white_result = to_ascii(white, grid_width=40, mapping_method="glyph")
+
+    assert all(set(row) <= {" "} for row in black_result)
+    assert all(set(row) <= {"0"} for row in white_result)
+
+
+def test_glyph_mapping_rejects_unknown_method():
+    image = np.zeros((100, 100), dtype=np.uint8)
+
+    with pytest.raises(ValueError, match="mapping_method"):
+        to_ascii(image, grid_width=40, mapping_method="unknown")
