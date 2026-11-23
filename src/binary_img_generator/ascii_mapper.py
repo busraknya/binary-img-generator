@@ -1,8 +1,11 @@
-"""Map grayscale pixels to binary characters (1 or space)."""
+"""Map grayscale pixels to 0, 1 and space characters."""
+
+import itertools
 
 import numpy as np
 
 from binary_img_generator.dithering import floyd_steinberg
+from binary_img_generator.png_exporter import get_character_palette
 
 # Parameter ranges from BRD BR-05.
 _MIN_GRID_WIDTH = 40
@@ -27,6 +30,19 @@ def _calculate_grid_height(grid_width: int, char_aspect: float, orig_h: int, ori
     return max(1, height)
 
 
+def _adjust_midpoint(image: np.ndarray, threshold: int) -> np.ndarray:
+    """Move the selected grayscale value to the middle while preserving endpoints."""
+    if threshold in (0, 128, 255):
+        return image.copy()
+
+    values = image.astype(np.float32)
+    adjusted = np.empty_like(values)
+    lower = values <= threshold
+    adjusted[lower] = values[lower] * (128.0 / threshold)
+    adjusted[~lower] = 128.0 + (values[~lower] - threshold) * (127.0 / (255 - threshold))
+    return np.clip(np.rint(adjusted), 0, 255).astype(np.uint8)
+
+
 def to_ascii(
     image: np.ndarray,
     grid_width: int = 120,
@@ -35,16 +51,15 @@ def to_ascii(
     invert: bool = False,
     dither: bool = True,
 ) -> list[str]:
-    """Convert a grayscale image to a list of 0/1 string rows.
+    """Convert a grayscale image to rows of 0, 1 and space characters.
 
     Args:
         image: 2D uint8 array (grayscale), values 0-255.
         grid_width: Number of characters per row (40-400).
-        char_aspect: Character width/height ratio (0.3-1.0). Monospace fonts
-            are taller than wide, typically around 0.5.
-        threshold: Pixel values below this become '1', others become ' '.
-        invert: When True, flip '1' and ' ' (light background).
-        dither: Apply Floyd-Steinberg before thresholding (default True).
+        char_aspect: Character width/height ratio (0.3-1.0).
+        threshold: Grayscale value mapped to the middle tone (default 128).
+        invert: Reverse the character-density mapping.
+        dither: Apply Floyd-Steinberg dithering (default True).
 
     Returns:
         List of equal-length strings; one string per row.
@@ -72,15 +87,25 @@ def to_ascii(
     orig_h, orig_w = image.shape
     grid_height = _calculate_grid_height(grid_width, char_aspect, orig_h, orig_w)
     resized = _resize_nearest(image, grid_height, grid_width)
+    resized = _adjust_midpoint(resized, threshold)
 
-    # Dark pixels become '1'; light pixels become ' '. invert=True swaps them.
-    dark_char = " " if invert else "1"
-    light_char = "1" if invert else " "
+    palette = get_character_palette()
+    characters = [character for character, _ in palette]
+    levels = tuple(level for _, level in palette)
 
     if dither:
-        resized = floyd_steinberg(resized, threshold)
-        # After dithering, pixels are exactly 0 or 255.
-        # 0 → dark → '1'; 255 → light → ' '.
+        quantized = floyd_steinberg(resized, levels=levels)
+    else:
+        boundaries = [(left + right) / 2 for left, right in itertools.pairwise(levels)]
+        indices = np.digitize(resized, boundaries)
+        quantized = np.asarray(levels, dtype=np.uint8)[indices]
 
-    char_grid = np.where(resized < threshold, dark_char, light_char)
+    if invert:
+        characters.reverse()
+
+    character_by_level = dict(zip(levels, characters))
+    char_grid = np.empty(quantized.shape, dtype="<U1")
+    for level, character in character_by_level.items():
+        char_grid[quantized == level] = character
+
     return ["".join(row) for row in char_grid]
