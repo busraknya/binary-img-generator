@@ -26,6 +26,6 @@ def equalize_histogram(image: np.ndarray) -> np.ndarray:
     if image.ndim != 2:
         raise ValueError(f"Görsel 2 boyutlu olmalı. Gelen şekil: {image.shape}")
 
-    pil_image = Image.fromarray(image.astype(np.uint8), mode="L")
+    pil_image = Image.fromarray(image.astype(np.uint8))
     equalized = ImageOps.equalize(pil_image)
     return np.asarray(equalized, dtype=np.uint8).copy()
