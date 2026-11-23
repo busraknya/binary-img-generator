@@ -21,7 +21,7 @@ def _default_output_path() -> Path:
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="big",
-        description="Fotoğrafı 0/1 karakterlerinden portreye çevirir.",
+        description="Fotoğrafı 0, 1 ve boşluk karakterlerinden portreye çevirir.",
     )
     parser.add_argument("input", help="Girdi fotoğrafı (JPEG, PNG, WebP)")
     parser.add_argument(
@@ -40,12 +40,12 @@ def _build_parser() -> argparse.ArgumentParser:
         "--threshold",
         type=int,
         default=128,
-        help="Siyah/beyaz eşiği (0-255, varsayılan 128)",
+        help="Orta ton eşiği (0-255, varsayılan 128)",
     )
     parser.add_argument(
         "--invert",
         action="store_true",
-        help="Siyah zemin yerine beyaz zemin kullan",
+        help="Karakter yoğunluklarını tersine çevir",
     )
     parser.add_argument(
         "--auto-contrast",
