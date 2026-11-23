@@ -29,24 +29,17 @@ def _calculate_grid_height(grid_width: int, char_aspect: float, orig_h: int, ori
 
 
 def _adjust_midpoint(image: np.ndarray, threshold: int) -> np.ndarray:
-    """Move the selected grayscale value to the middle of the tone range."""
-    if threshold == 128:
+    """Move the selected grayscale value to the middle while preserving endpoints."""
+    if threshold in (0, 128, 255):
         return image.copy()
 
     values = image.astype(np.float32)
     adjusted = np.empty_like(values)
-
-    if threshold == 0:
-        adjusted = 128.0 + values * (127.0 / 255.0)
-    elif threshold == 255:
-        adjusted = values * (128.0 / 255.0)
-    else:
-        lower = values <= threshold
-        adjusted[lower] = values[lower] * (128.0 / threshold)
-        adjusted[~lower] = 128.0 + (values[~lower] - threshold) * (
-            127.0 / (255 - threshold)
-        )
-
+    lower = values <= threshold
+    adjusted[lower] = values[lower] * (128.0 / threshold)
+    adjusted[~lower] = 128.0 + (values[~lower] - threshold) * (
+        127.0 / (255 - threshold)
+    )
     return np.clip(np.rint(adjusted), 0, 255).astype(np.uint8)
 
 
@@ -64,7 +57,7 @@ def to_ascii(
         image: 2D uint8 array (grayscale), values 0-255.
         grid_width: Number of characters per row (40-400).
         char_aspect: Character width/height ratio (0.3-1.0).
-        threshold: Grayscale value mapped to the middle of the tone range.
+        threshold: Grayscale value mapped to the middle tone (default 128).
         invert: Reverse the character-density mapping.
         dither: Apply Floyd-Steinberg dithering (default True).
 
