@@ -1,5 +1,7 @@
 """Map grayscale pixels to 0, 1 and space characters."""
 
+import itertools
+
 import numpy as np
 
 from binary_img_generator.dithering import floyd_steinberg
@@ -97,7 +99,7 @@ def to_ascii(
     if dither:
         quantized = floyd_steinberg(resized, levels=levels)
     else:
-        boundaries = [(left + right) / 2 for left, right in zip(levels, levels[1:])]
+        boundaries = [(left + right) / 2 for left, right in itertools.pairwise(levels)]
         indices = np.digitize(resized, boundaries)
         quantized = np.asarray(levels, dtype=np.uint8)[indices]
 
