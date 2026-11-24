@@ -1,8 +1,7 @@
-"""Map grayscale pixels to 0, 1 and space characters."""
-
-import itertools
+"""Map grayscale pixels to 0 and 1 characters."""
 
 import numpy as np
+
 from PIL import Image
 
 from binary_img_generator.dithering import floyd_steinberg
@@ -63,19 +62,19 @@ def to_ascii(
     dither: bool = True,
     resize_method: str = "area",
 ) -> list[str]:
-    """Convert a grayscale image to rows of 0, 1 and space characters.
+    """Convert a grayscale image to rows containing only 0 and 1.
 
     Args:
         image: 2D uint8 array (grayscale), values 0-255.
         grid_width: Number of characters per row (40-400).
         char_aspect: Character width/height ratio (0.3-1.0).
         threshold: Grayscale value mapped to the middle tone (default 128).
-        invert: Reverse the character-density mapping.
+        invert: Reverse the character mapping.
         dither: Apply Floyd-Steinberg dithering (default True).
         resize_method: "area" preserves average tones; "nearest" selects pixels.
 
     Returns:
-        List of equal-length strings; one string per row.
+        List of equal-length strings; one string per row, using only 0 and 1.
 
     Raises:
         ValueError: If any parameter is out of range or the image is not 2D.
@@ -110,21 +109,17 @@ def to_ascii(
         resized = _resize_nearest(image, grid_height, grid_width)
     resized = _adjust_midpoint(resized, threshold)
 
+    if dither:
+        quantized = floyd_steinberg(resized)
+    else:
+        quantized = np.where(resized >= 128, 255, 0).astype(np.uint8)
+
     palette = get_character_palette()
     characters = [character for character, _ in palette]
-    levels = tuple(level for _, level in palette)
-
-    if dither:
-        quantized = floyd_steinberg(resized, levels=levels)
-    else:
-        boundaries = [(left + right) / 2 for left, right in itertools.pairwise(levels)]
-        indices = np.digitize(resized, boundaries)
-        quantized = np.asarray(levels, dtype=np.uint8)[indices]
-
     if invert:
         characters.reverse()
 
-    character_by_level = dict(zip(levels, characters))
+    character_by_level = {0: characters[0], 255: characters[1]}
     char_grid = np.empty(quantized.shape, dtype="<U1")
     for level, character in character_by_level.items():
         char_grid[quantized == level] = character
