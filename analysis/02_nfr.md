@@ -33,11 +33,12 @@ Dikkat edilecek noktalar:
 - Görüntünün gri tonlamaya dönüştürülmesi.
 - Kontrast ve parlaklık farklılıklarının yönetilmesi.
 - Yüz hatları, gölgeler ve önemli detayların korunması.
-- `0`, `1` ve boşluk karakterlerinin dengeli kullanılması.
-- Gerekli durumlarda dithering gibi görüntü işleme yöntemlerinin değerlendirilmesi.
+- Çıktıda yalnızca `0` ve `1` karakterlerinin kullanılması; boşluk veya başka karakter eklenmemesi.
+- Floyd–Steinberg dithering yönteminin varsayılan olarak kullanılması.
+- Görüntünün karakter ızgarasına küçültülmesi sırasında detay kaybının azaltılması.
 - Oluşturulan portrenin PNG olarak indirilebilmesi.
 
-En iyi sonucu veren karakter eşleme ve görüntü işleme yöntemi denemelerle belirlenecektir. Henüz kesinleşmemiş algoritmalar zorunlu teknik karar olarak kabul edilmeyecektir.
+Karakterlerin açık ve koyu tonları nasıl temsil edeceği, PNG çıktısında kullanılan fontla tutarlı olmalıdır. Görsel kalite, aynı kaynak fotoğraf ve aynı ayarlarla yapılan karşılaştırmalar üzerinden değerlendirilmelidir.
 
 ## 3. Performans, Güvenlik ve Gizlilik
 
@@ -56,6 +57,8 @@ Geliştirme sırasında aşağıdaki alanlar kontrol edilmelidir:
 
 - Farklı boyut ve formatlardaki fotoğrafların işlenmesi.
 - Bozuk veya desteklenmeyen dosyalarda hata yönetimi.
+- Çıktıda yalnızca `0` ve `1` karakterlerinin bulunması.
+- Floyd–Steinberg dithering çıktısının doğruluğu.
 - Karakter eşleme ve PNG çıktısının doğruluğu.
 - Web tarafında fotoğraf yükleme, önizleme ve indirme akışı.
 - Farklı ekran boyutlarında kullanılabilirlik.

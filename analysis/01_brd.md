@@ -3,7 +3,7 @@
 
 ## 1. Projenin Tanımı
 
-Binary Image Generator, kullanıcının yüklediği bir fotoğrafı `0`, `1` ve boşluk karakterlerinden oluşan bir portreye dönüştüren bir araçtır.
+Binary Image Generator, kullanıcının yüklediği bir fotoğrafı yalnızca `0` ve `1` karakterlerinden oluşan bir portreye dönüştüren bir araçtır.
 
 Projenin amacı, fotoğrafları yalnızca siyah-beyaz hâle getirmek değil, fotoğraftaki yüz hatlarını, gölgeleri ve önemli görsel detayları mümkün olduğunca koruyarak estetik bir binary portre oluşturmaktır.
 
@@ -25,7 +25,7 @@ Projenin üç temel amacı vardır:
 ### 3.1 Kapsam Dahilinde
 
 - JPEG, PNG ve WebP formatlarında fotoğraf kabul etmek.
-- Fotoğrafı `0`, `1` ve boşluk karakterlerinden oluşan bir portreye dönüştürmek.
+- Fotoğrafı yalnızca `0` ve `1` karakterlerinden oluşan bir portreye dönüştürmek.
 - Fotoğrafın en-boy oranını mümkün olduğunca korumak.
 - Yüz hatlarını ve önemli görsel detayları korumaya odaklanmak.
 - Kullanıcıya dönüştürülmüş portrenin önizlemesini göstermek.
@@ -70,15 +70,14 @@ Kullanıcı, web uygulamasına veya yerel araca bir fotoğraf sağlayabilmelidir
 
 ### 5.2 Binary Portre Oluşturma (BR-02)
 
-Sistem, yüklenen fotoğrafı `0`, `1` ve boşluk karakterleriyle temsil edilen bir portreye dönüştürmelidir.
+Sistem, yüklenen fotoğrafı yalnızca `0` ve `1` karakterleriyle temsil edilen bir portreye dönüştürmelidir.
 
-- Üç karakter de görselin farklı tonlarını temsil edebilmelidir.
+- `0` ve `1` görselin iki farklı ton seviyesini temsil etmelidir.
 - Karakterlerin kullanımı sonucunda fotoğrafın önemli detayları mümkün olduğunca korunmalıdır.
 - Yüz, göz, burun ve ağız gibi belirgin hatların tanınabilir olması hedeflenmelidir.
 - Tüm satırlar tutarlı bir karakter düzenine sahip olmalıdır.
 - Görselin oranı bozulmamalıdır.
-
-Karakterlerin hangi tonlarda kullanılacağı ve en iyi görsel sonucu sağlayan dönüştürme yöntemi teknik tasarım ve test aşamasında belirlenecektir.
+- Çıktıda boşluk veya başka karakter kullanılmamalıdır.
 
 ### 5.3 Görsel Kalitesi (BR-03)
 
@@ -87,12 +86,12 @@ Kaliteli çıktı, ürünün temel gereksinimlerinden biridir.
 Sistem:
 
 - Fotoğrafın aydınlık ve karanlık bölgelerini ayırt edebilmelidir.
-- Orta tonları mümkün olduğunca başarılı temsil etmelidir.
+- İki ton arasındaki geçişleri mümkün olduğunca başarılı temsil etmelidir.
 - Yüz hatlarının kaybolmasına neden olan aşırı kontrasttan kaçınmalıdır.
 - Görsel detayları korumak için uygun ton dağılımı ve dithering yöntemlerini desteklemelidir.
 - Farklı fotoğraf türlerinde kabul edilebilir sonuçlar üretmelidir.
 
-Varsayılan ayarlar, kullanıcının ek bir işlem yapmasına gerek kalmadan dengeli ve estetik bir sonuç oluşturmayı hedeflemelidir.
+Varsayılan ayarlar, kullanıcının ek bir işlem yapmasına gerek kalmadan dengeli ve estetik bir sonuç oluşturmayı hedeflemelidir. Floyd–Steinberg dithering varsayılan yöntemdir.
 
 ### 5.4 Görsel Ayarları (BR-04)
 
@@ -123,6 +122,7 @@ Ayarlar anlaşılır isimlerle sunulmalı ve kullanıcı değişikliklerin sonuc
 - Arka plan ve karakter renkleri okunabilir olmalıdır.
 - Kullanıcının özel fotoğraf bilgileri veya EXIF verileri çıktı dosyasına taşınmamalıdır.
 - İndirilen dosya, önizlemede görülen karakter düzeniyle tutarlı olmalıdır.
+- Çıktı yalnızca `0` ve `1` karakterlerini içermelidir.
 
 ### 5.7 Gizlilik (BR-07)
 
@@ -155,7 +155,8 @@ GitHub deposunda aşağıdakiler bulunmalıdır:
 İlk sürümün tamamlanmış sayılması için:
 
 - [ ] Kullanıcı JPEG, PNG veya WebP fotoğrafı yükleyebilmelidir.
-- [ ] Sistem fotoğrafı `0`, `1` ve boşluk karakterleriyle dönüştürebilmelidir.
+- [ ] Sistem fotoğrafı yalnızca `0` ve `1` karakterleriyle dönüştürebilmelidir.
+- [ ] Çıktıda boşluk veya başka karakter bulunmamalıdır.
 - [ ] Oluşturulan portrede yüz hatları mümkün olduğunca tanınabilir olmalıdır.
 - [ ] Farklı ışık ve kontrast koşullarındaki fotoğraflarda kabul edilebilir sonuç alınmalıdır.
 - [ ] Kullanıcı temel görsel ayarlarını değiştirebilmelidir.
@@ -171,7 +172,7 @@ GitHub deposunda aşağıdakiler bulunmalıdır:
 
 | Terim | Açıklama |
 |---|---|
-| Binary portre | Bir fotoğrafın 0 ve 1 gibi karakterlerle temsil edilen görsel hâli. |
+| Binary portre | Bir fotoğrafın yalnızca 0 ve 1 karakterleriyle temsil edilen görsel hâli. |
 | Grayscale | Fotoğrafın renklerden arındırılarak gri tonlarla temsil edilmesi. |
 | Karakter yoğunluğu | Kullanılan karakterlerin görselde oluşturduğu koyuluk ve doluluk seviyesi. |
 | Dithering | Ara tonları küçük desenlerle temsil ederek görsel detayları korumaya yardımcı olan teknik. |

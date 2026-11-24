@@ -1,8 +1,7 @@
-"""Map grayscale pixels to 0, 1 and space characters."""
-
-import itertools
+"""Map grayscale pixels to 0 and 1 characters."""
 
 import numpy as np
+from PIL import Image
 
 from binary_img_generator.dithering import floyd_steinberg
 from binary_img_generator.png_exporter import get_character_palette
@@ -14,6 +13,7 @@ _MIN_CHAR_ASPECT = 0.3
 _MAX_CHAR_ASPECT = 1.0
 _MIN_THRESHOLD = 0
 _MAX_THRESHOLD = 255
+_RESIZE_METHODS = {"area", "nearest"}
 
 
 def _resize_nearest(image: np.ndarray, target_h: int, target_w: int) -> np.ndarray:
@@ -22,6 +22,15 @@ def _resize_nearest(image: np.ndarray, target_h: int, target_w: int) -> np.ndarr
     y_indices = (np.arange(target_h) * orig_h / target_h).astype(int)
     x_indices = (np.arange(target_w) * orig_w / target_w).astype(int)
     return image[y_indices[:, None], x_indices]
+
+
+def _resize_area(image: np.ndarray, target_h: int, target_w: int) -> np.ndarray:
+    """Resize a grayscale image while preserving the average tone of each area."""
+    resized = Image.fromarray(image.astype(np.uint8)).resize(
+        (target_w, target_h),
+        resample=Image.Resampling.BOX,
+    )
+    return np.asarray(resized, dtype=np.uint8)
 
 
 def _calculate_grid_height(grid_width: int, char_aspect: float, orig_h: int, orig_w: int) -> int:
@@ -50,19 +59,21 @@ def to_ascii(
     threshold: int = 128,
     invert: bool = False,
     dither: bool = True,
+    resize_method: str = "area",
 ) -> list[str]:
-    """Convert a grayscale image to rows of 0, 1 and space characters.
+    """Convert a grayscale image to rows containing only 0 and 1.
 
     Args:
         image: 2D uint8 array (grayscale), values 0-255.
         grid_width: Number of characters per row (40-400).
         char_aspect: Character width/height ratio (0.3-1.0).
         threshold: Grayscale value mapped to the middle tone (default 128).
-        invert: Reverse the character-density mapping.
+        invert: Reverse the character mapping.
         dither: Apply Floyd-Steinberg dithering (default True).
+        resize_method: "area" preserves average tones; "nearest" selects pixels.
 
     Returns:
-        List of equal-length strings; one string per row.
+        List of equal-length strings; one string per row, using only 0 and 1.
 
     Raises:
         ValueError: If any parameter is out of range or the image is not 2D.
@@ -83,27 +94,30 @@ def to_ascii(
         raise ValueError(
             f"threshold {_MIN_THRESHOLD}-{_MAX_THRESHOLD} aralığında olmalı. " f"Gelen: {threshold}"
         )
+    if resize_method not in _RESIZE_METHODS:
+        raise ValueError(
+            f"resize_method şu değerlerden biri olmalı: {', '.join(sorted(_RESIZE_METHODS))}"
+        )
 
     orig_h, orig_w = image.shape
     grid_height = _calculate_grid_height(grid_width, char_aspect, orig_h, orig_w)
-    resized = _resize_nearest(image, grid_height, grid_width)
+    if resize_method == "area":
+        resized = _resize_area(image, grid_height, grid_width)
+    else:
+        resized = _resize_nearest(image, grid_height, grid_width)
     resized = _adjust_midpoint(resized, threshold)
+
+    if dither:
+        quantized = floyd_steinberg(resized)
+    else:
+        quantized = np.where(resized >= 128, 255, 0).astype(np.uint8)
 
     palette = get_character_palette()
     characters = [character for character, _ in palette]
-    levels = tuple(level for _, level in palette)
-
-    if dither:
-        quantized = floyd_steinberg(resized, levels=levels)
-    else:
-        boundaries = [(left + right) / 2 for left, right in itertools.pairwise(levels)]
-        indices = np.digitize(resized, boundaries)
-        quantized = np.asarray(levels, dtype=np.uint8)[indices]
-
     if invert:
         characters.reverse()
 
-    character_by_level = dict(zip(levels, characters))
+    character_by_level = {0: characters[0], 255: characters[1]}
     char_grid = np.empty(quantized.shape, dtype="<U1")
     for level, character in character_by_level.items():
         char_grid[quantized == level] = character

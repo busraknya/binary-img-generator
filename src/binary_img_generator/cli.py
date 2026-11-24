@@ -21,7 +21,7 @@ def _default_output_path() -> Path:
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="big",
-        description="Fotoğrafı 0, 1 ve boşluk karakterlerinden portreye çevirir.",
+        description="Fotoğrafı yalnızca 0 ve 1 karakterlerinden portreye çevirir.",
     )
     parser.add_argument("input", help="Girdi fotoğrafı (JPEG, PNG, WebP)")
     parser.add_argument(
@@ -43,9 +43,15 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Orta ton eşiği (0-255, varsayılan 128)",
     )
     parser.add_argument(
+        "--resize-method",
+        choices=("area", "nearest"),
+        default="area",
+        help="Küçültme yöntemi (varsayılan: area)",
+    )
+    parser.add_argument(
         "--invert",
         action="store_true",
-        help="Karakter yoğunluklarını tersine çevir",
+        help="0 ve 1 eşleştirmesini tersine çevir",
     )
     parser.add_argument(
         "--auto-contrast",
@@ -83,6 +89,7 @@ def main(argv: list[str] | None = None) -> int:
             threshold=args.threshold,
             invert=args.invert,
             dither=args.dither,
+            resize_method=args.resize_method,
         )
         export_png(art, output_path)
     except (FileNotFoundError, ValueError) as exc:
