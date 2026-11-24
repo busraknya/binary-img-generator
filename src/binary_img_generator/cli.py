@@ -21,7 +21,7 @@ def _default_output_path() -> Path:
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="big",
-        description="Fotoğrafı 0, 1 ve boşluk karakterlerinden portreye çevirir.",
+        description="Fotoğrafı yalnızca 0 ve 1 karakterlerinden portreye çevirir.",
     )
     parser.add_argument("input", help="Girdi fotoğrafı (JPEG, PNG, WebP)")
     parser.add_argument(
@@ -51,7 +51,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--invert",
         action="store_true",
-        help="Karakter yoğunluklarını tersine çevir",
+        help="0 ve 1 eşleştirmesini tersine çevir",
     )
     parser.add_argument(
         "--auto-contrast",
