@@ -1,7 +1,6 @@
 """Map grayscale pixels to 0 and 1 characters."""
 
 import numpy as np
-
 from PIL import Image
 
 from binary_img_generator.dithering import floyd_steinberg
@@ -93,8 +92,7 @@ def to_ascii(
         )
     if not (_MIN_THRESHOLD <= threshold <= _MAX_THRESHOLD):
         raise ValueError(
-            f"threshold {_MIN_THRESHOLD}-{_MAX_THRESHOLD} aralığında olmalı. "
-            f"Gelen: {threshold}"
+            f"threshold {_MIN_THRESHOLD}-{_MAX_THRESHOLD} aralığında olmalı. " f"Gelen: {threshold}"
         )
     if resize_method not in _RESIZE_METHODS:
         raise ValueError(

@@ -1,6 +1,5 @@
 """Tests for png_exporter."""
 
-import numpy as np
 import pytest
 from PIL import Image
 
@@ -9,7 +8,7 @@ from binary_img_generator.png_exporter import export_png, get_character_palette
 
 def test_creates_png_file(tmp_path):
     output = tmp_path / "test.png"
-    export_png(["10", "01", "110"], output)
+    export_png(["101", "010", "110"], output)
     assert output.exists()
     assert output.suffix == ".png"
 
