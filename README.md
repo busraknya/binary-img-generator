@@ -1,8 +1,8 @@
 # Binary Image Generator
 
-Convert your photos into simple binary portraits made with `1` characters and spaces.
+Convert your photos into text-based portraits made only with `0` and `1`.
 
-Fotoğraflarınızı `1` karakterleri ve boşluklardan oluşan sade portrelere dönüştürün.
+Fotoğraflarınızı yalnızca `0` ve `1` karakterlerinden oluşan portrelere dönüştürün.
 
 [English](#english) | [Türkçe](#turkce)
 
@@ -14,7 +14,7 @@ Fotoğraflarınızı `1` karakterleri ve boşluklardan oluşan sade portrelere d
 
 ### About
 
-Binary Image Generator is a Python tool. It turns photos into text-based portraits and saves them as PNG images.
+Binary Image Generator is a Python tool. It turns photos into binary text portraits and saves them as PNG images.
 
 The project currently has a command-line tool. A web application is planned for a future release.
 
@@ -22,11 +22,12 @@ The project currently has a command-line tool. A web application is planned for 
 
 - Supports JPEG, PNG, and WebP images.
 - Converts images to grayscale.
-- Creates portraits with `1` characters and spaces.
+- Creates portraits using only `0` and `1`.
+- Measures character density using the font selected for PNG export.
 - Keeps the original image proportions.
-- Uses Floyd–Steinberg dithering to keep more image details.
+- Uses Floyd–Steinberg dithering by default to keep more image details.
 - Offers automatic contrast adjustment.
-- Lets you change portrait width and threshold settings.
+- Lets you change portrait width and the middle-tone setting.
 - Saves the result as a PNG image with white characters on a black background.
 
 ### Requirements
@@ -88,10 +89,10 @@ The tool saves the PNG file in the `output/` folder by default.
 |---|---|---|
 | `--grid-width` | Number of characters in each row (40–400) | `120` |
 | `--char-aspect` | Character width-to-height ratio (0.3–1.0) | `0.5` |
-| `--threshold` | Grayscale threshold (0–255) | `128` |
-| `--invert` | Reverses light and dark areas | Off |
+| `--threshold` | Sets the middle tone (0–255) | `128` |
+| `--invert` | Reverses the 0/1 mapping | Off |
 | `--auto-contrast` | Adjusts image contrast automatically | Off |
-| `--dither` / `--no-dither` | Turns dithering on or off | On |
+| `--dither` / `--no-dither` | Turns Floyd–Steinberg dithering on or off | On |
 | `--output` | Sets the output file path | Automatic |
 
 ### Examples
@@ -171,7 +172,7 @@ See [the project roadmap](analysis/04_yol_haritasi.md) for more details.
 
 ### Hakkında
 
-Binary Image Generator, fotoğrafları metin tabanlı portrelere dönüştüren bir Python aracıdır. Oluşturulan portreleri PNG olarak kaydeder.
+Binary Image Generator, fotoğrafları yalnızca `0` ve `1` karakterlerinden oluşan portrelere dönüştüren bir Python aracıdır. Oluşturulan portreleri PNG olarak kaydeder.
 
 Projenin şu anda komut satırından çalışan bir sürümü vardır. Web uygulaması ise gelecek sürümler için planlanmaktadır.
 
@@ -179,11 +180,12 @@ Projenin şu anda komut satırından çalışan bir sürümü vardır. Web uygul
 
 - JPEG, PNG ve WebP görsellerini destekler.
 - Görselleri gri tonlamaya dönüştürür.
-- Portreleri `1` karakterleri ve boşluklarla oluşturur.
+- Portreleri yalnızca `0` ve `1` karakterleriyle oluşturur.
+- PNG çıktısında kullanılan fonta göre karakter yoğunluğunu ölçer.
 - Görselin orijinal oranlarını korur.
-- Görsel detaylarını korumaya yardımcı olan Floyd–Steinberg dithering yöntemini kullanır.
+- Görsel detaylarını korumaya yardımcı olan Floyd–Steinberg dithering yöntemini varsayılan olarak kullanır.
 - Otomatik kontrast ayarı sunar.
-- Portre genişliğini ve eşik değerini değiştirmeye izin verir.
+- Portre genişliğini ve orta ton ayarını değiştirmeye izin verir.
 - Sonucu siyah arka plan üzerinde beyaz karakterlerle PNG olarak kaydeder.
 
 ### Gereksinimler
@@ -244,11 +246,11 @@ Oluşturulan PNG dosyası varsayılan olarak `output/` klasörüne kaydedilir.
 | Seçenek | Açıklama | Varsayılan |
 |---|---|---|
 | `--grid-width` | Her satırdaki karakter sayısı (40–400) | `120` |
-| `--char-aspect` | Karakter genişlik/yükseklik oranı (0.3–1.0) | `0.5` |
-| `--threshold` | Gri tonlama eşik değeri (0–255) | `128` |
-| `--invert` | Açık ve koyu alanları tersine çevirir | Kapalı |
+| `--char-aspect` | Karakter en/boy oranı (0.3-1.0) | `0.5` |
+| `--threshold` | Orta ton ayarı (0–255) | `128` |
+| `--invert` | 0 ve 1 eşleştirmesini tersine çevirir | Kapalı |
 | `--auto-contrast` | Kontrastı otomatik ayarlar | Kapalı |
-| `--dither` / `--no-dither` | Dithering özelliğini açar veya kapatır | Açık |
+| `--dither` / `--no-dither` | Floyd–Steinberg dithering özelliğini açar veya kapatır | Açık |
 | `--output` | Çıktı dosyasının konumunu belirler | Otomatik |
 
 ### Örnekler
