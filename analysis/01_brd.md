@@ -7,10 +7,7 @@ Binary Image Generator, kullanıcının yüklediği bir fotoğrafı yalnızca `0
 
 Projenin amacı, fotoğrafları yalnızca siyah-beyaz hâle getirmek değil, fotoğraftaki yüz hatlarını, gölgeleri ve önemli görsel detayları mümkün olduğunca koruyarak estetik bir binary portre oluşturmaktır.
 
-Ürün iki kullanım şekli sunar:
-
-- **Web uygulaması:** Kullanıcı fotoğrafını yükler, dönüştürülmüş portresini görüntüler ve PNG olarak indirir.
-- **Yerel kullanım:** Geliştirici, bilgisayarındaki fotoğrafları komut satırı üzerinden dönüştürerek PNG çıktısı alabilir.
+Projenin şu an kullanılabilir olan kısmı Python komut satırı aracıdır (CLI). Kullanıcı, bilgisayarındaki fotoğrafları yerel ortamında dönüştürerek PNG çıktısı alabilir. Web uygulaması planlanan sonraki geliştirme aşamasıdır.
 
 ## 2. Projenin Amacı
 
@@ -22,20 +19,27 @@ Projenin üç temel amacı vardır:
 
 ## 3. Ürün Kapsamı
 
-### 3.1 Kapsam Dahilinde
+### 3.1 Mevcut kapsam
 
 - JPEG, PNG ve WebP formatlarında fotoğraf kabul etmek.
 - Fotoğrafı yalnızca `0` ve `1` karakterlerinden oluşan bir portreye dönüştürmek.
 - Fotoğrafın en-boy oranını mümkün olduğunca korumak.
 - Yüz hatlarını ve önemli görsel detayları korumaya odaklanmak.
-- Kullanıcıya dönüştürülmüş portrenin önizlemesini göstermek.
-- Görsel kalitesini iyileştirmek için temel ayarlar sunmak.
-- Oluşturulan portreyi PNG olarak indirmek.
-- Yerel kullanım için komut satırı üzerinden PNG üretimini desteklemek.
-- Türkçe ve İngilizce anlaşılır kullanım ve hata açıklamaları sağlamak.
+- Komut satırı üzerinden görsel dönüştürme ve PNG çıktısı üretmek.
+- CLI üzerinden desteklenen temel dönüşüm ayarlarını kullanmak.
+- Kurulum ve kullanım adımlarını README üzerinden açıklamak.
 - Projeyi GitHub üzerinde açık kaynak olarak yayınlamak.
 
-### 3.2 Kapsam Dışında
+### 3.2 Sonraki aşamada değerlendirilecekler
+
+- Tarayıcı üzerinden fotoğraf yükleme ve dönüştürme.
+- Dönüştürülen sonucu web arayüzünde önizleme ve PNG olarak indirme.
+- Web arayüzünde parlaklık, kontrast ve detay seviyesi gibi ayarlar.
+- Farklı ekran boyutlarına uyumlu arayüz.
+
+Bu maddeler web sürümü geliştirilene kadar mevcut CLI özellikleri olarak değerlendirilmemelidir.
+
+### 3.3 Kapsam Dışında
 
 İlk sürümde aşağıdaki özellikler bulunmayacaktır:
 
@@ -60,7 +64,7 @@ Projenin üç temel amacı vardır:
 
 ### 5.1 Fotoğraf Yükleme (BR-01)
 
-Kullanıcı, web uygulamasına veya yerel araca bir fotoğraf sağlayabilmelidir.
+Kullanıcı, CLI üzerinden araca bir fotoğraf sağlayabilmelidir. Web üzerinden yükleme, web sürümünün kapsamındadır.
 
 - JPEG, PNG ve WebP formatları desteklenmelidir.
 - Desteklenmeyen veya bozuk dosyalar kabul edilmemelidir.
@@ -95,9 +99,7 @@ Varsayılan ayarlar, kullanıcının ek bir işlem yapmasına gerek kalmadan den
 
 ### 5.4 Görsel Ayarları (BR-04)
 
-Kullanıcı, oluşturulan portrenin görünümünü iyileştirebilmelidir.
-
-İlk sürüm için değerlendirilmesi gereken ayarlar:
+CLI, README'de açıklanan mevcut dönüşüm seçeneklerini desteklemelidir. Web sürümünde değerlendirilecek görsel ayarları:
 
 - Parlaklık
 - Kontrast
@@ -107,14 +109,7 @@ Kullanıcı, oluşturulan portrenin görünümünü iyileştirebilmelidir.
 
 Ayarlar anlaşılır isimlerle sunulmalı ve kullanıcı değişikliklerin sonucunu önizlemede görebilmelidir.
 
-### 5.5 Önizleme (BR-05)
-
-- Kullanıcı dönüştürülmüş portresini web uygulamasında görebilmelidir.
-- Ayarlarda yapılan değişiklikler önizlemeye yansıtılmalıdır.
-- Önizleme, indirilecek PNG ile aynı görsel sonucu temsil etmelidir.
-- Kullanıcı isterse başlangıç ayarlarına dönebilmelidir.
-
-### 5.6 PNG Çıktısı (BR-06)
+### 5.5 PNG Çıktısı (BR-05)
 
 - Oluşturulan portre PNG formatında indirilebilmelidir.
 - Çıktı yüksek çözünürlüklü olmalıdır.
@@ -124,14 +119,14 @@ Ayarlar anlaşılır isimlerle sunulmalı ve kullanıcı değişikliklerin sonuc
 - İndirilen dosya, önizlemede görülen karakter düzeniyle tutarlı olmalıdır.
 - Çıktı yalnızca `0` ve `1` karakterlerini içermelidir.
 
-### 5.7 Gizlilik (BR-07)
+### 5.6 Gizlilik (BR-06)
 
 - Kullanıcının fotoğrafı izni olmadan başka bir yerde saklanmamalıdır.
 - Fotoğrafın işlenmesi için sunucuya gönderilmesi gerekmemelidir.
 - Kullanıcı fotoğrafı üzerinde işlem yaparken gizliliği korunmalıdır.
 - Kullanıcı hesabı veya veritabanı gerektiren bir işlem bulunmamalıdır.
 
-### 5.8 Yerel Kullanım (BR-08)
+### 5.7 Yerel Kullanım (BR-07)
 
 Geliştirici, projeyi kendi bilgisayarında çalıştırarak fotoğrafları PNG formatında dönüştürebilmelidir.
 
@@ -140,7 +135,7 @@ Geliştirici, projeyi kendi bilgisayarında çalıştırarak fotoğrafları PNG 
 - Oluşturulan çıktı belirtilen klasöre kaydedilmelidir.
 - Hatalı girişlerde anlaşılır hata mesajı verilmelidir.
 
-### 5.9 Açık Kaynak Yayını (BR-09)
+### 5.8 Açık Kaynak Yayını (BR-08)
 
 GitHub deposunda aşağıdakiler bulunmalıdır:
 
@@ -154,16 +149,15 @@ GitHub deposunda aşağıdakiler bulunmalıdır:
 
 İlk sürümün tamamlanmış sayılması için:
 
-- [ ] Kullanıcı JPEG, PNG veya WebP fotoğrafı yükleyebilmelidir.
+- [ ] CLI, JPEG, PNG veya WebP fotoğraflarını okuyabilmelidir.
 - [ ] Sistem fotoğrafı yalnızca `0` ve `1` karakterleriyle dönüştürebilmelidir.
 - [ ] Çıktıda boşluk veya başka karakter bulunmamalıdır.
 - [ ] Oluşturulan portrede yüz hatları mümkün olduğunca tanınabilir olmalıdır.
 - [ ] Farklı ışık ve kontrast koşullarındaki fotoğraflarda kabul edilebilir sonuç alınmalıdır.
-- [ ] Kullanıcı temel görsel ayarlarını değiştirebilmelidir.
-- [ ] Önizleme yapılan değişiklikleri doğru göstermelidir.
-- [ ] Kullanıcı sonucu yüksek çözünürlüklü PNG olarak indirebilmelidir.
-- [ ] Önizleme ve indirilen dosya birbiriyle tutarlı olmalıdır.
-- [ ] Fotoğraflar sunucuya gönderilmeden işlenebilmelidir.
+- [ ] CLI üzerinden desteklenen dönüşüm ayarları kullanılabilmelidir.
+- [ ] Dönüştürülen görsel PNG olarak kaydedilebilmelidir.
+- [ ] CLI işlemi yerel ortamda gerçekleştirmelidir.
+- [ ] Web sürümü geliştirildiğinde yükleme, önizleme, ayarlar ve indirme akışları ayrıca doğrulanmalıdır.
 - [ ] Geçersiz dosyalarda anlaşılır hata mesajları verilmelidir.
 - [ ] Yerel kullanım komut satırı üzerinden çalışmalıdır.
 - [ ] README, projeyi yeni bir kullanıcının kurup çalıştırmasına yetecek açıklıkta olmalıdır.
