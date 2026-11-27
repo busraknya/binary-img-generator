@@ -10,7 +10,7 @@ Fotoğrafları komut satırı üzerinden karakter tabanlı portrelere dönüşt�
 - [x] Fotoğraf yükleme ve gri tonlamaya dönüştürme
 - [x] Karakter tabanlı çıktı oluşturma
 - [x] PNG olarak dışa aktarma
-- [ ] 0, 1 ve boşluk karakterleriyle dönüşümün tamamlanması
+- [x] Çıktının yalnızca `0` ve `1` karakterlerinden oluşturulması
 
 **Tamamlanma ölçütü:** CLI üzerinden verilen bir fotoğrafın istenen karakterlerle dönüştürülerek PNG olarak kaydedilebilmesi.
 
@@ -25,7 +25,19 @@ Farklı fotoğraflarda tanınabilir ve dengeli sonuçlar elde edilmesi.
 
 **Tamamlanma ölçütü:** Yüz hatlarının ve önemli görsel detayların mümkün olduğunca korunması.
 
-## 3. Web Uygulaması
+## 3. Test ve Güvenilirlik
+
+Görüntü işleme ve CLI davranışının farklı koşullarda doğru çalıştığından emin olmak.
+
+- [ ] Desteklenen dosya formatlarını ve geçersiz girişleri test etme
+- [ ] Çıktıda yalnızca `0` ve `1` bulunduğunu doğrulama
+- [ ] Eşikleme ve dithering seçeneklerini test etme
+- [ ] Farklı görsel boyutlarında çıktı kalitesini ve kaynak kullanımını kontrol etme
+- [ ] Testleri ilgili her değişiklikte çalıştırma
+
+**Tamamlanma ölçütü:** Temel dönüşüm ve hata senaryolarının otomatik testlerle kontrol edilmesi.
+
+## 4. Web Uygulaması
 
 Kullanıcıların herhangi bir kurulum yapmadan fotoğraflarını dönüştürebileceği arayüz.
 
@@ -36,18 +48,6 @@ Kullanıcıların herhangi bir kurulum yapmadan fotoğraflarını dönüştüreb
 - [ ] Farklı ekran boyutlarında kullanılabilir arayüz
 
 **Tamamlanma ölçütü:** Kullanıcının fotoğrafını yükleyip sonucu görebilmesi ve PNG olarak indirebilmesi.
-
-## 4. Test ve Güvenilirlik
-
-Uygulamanın farklı koşullarda doğru ve güvenilir çalışmasının sağlanması.
-
-- [ ] Görsel işleme adımlarının test edilmesi
-- [ ] Geçersiz veya desteklenmeyen dosyaların kontrol edilmesi
-- [ ] Farklı boyutlardaki görsellerin test edilmesi
-- [ ] Hata mesajlarının ve kullanıcı geri bildirimlerinin iyileştirilmesi
-- [ ] Performans ve kaynak kullanımının değerlendirilmesi
-
-**Tamamlanma ölçütü:** Yaygın kullanım senaryolarında uygulamanın beklenen şekilde çalışması ve hataların anlaşılır biçimde ele alınması.
 
 ## 5. Yayına Hazırlık
 
