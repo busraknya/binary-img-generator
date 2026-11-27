@@ -3,31 +3,19 @@
 
 Bu belge, Binary Image Generator'ın nasıl çalışacağını ve hangi kalite koşullarını sağlaması gerektiğini açıklar.
 
-Proje iki kullanım alanına sahiptir:
-
-- **Python CLI:** Bilgisayarda bulunan bir fotoğrafı komut satırından dönüştürme.
-- **Web uygulaması:** Kullanıcının tarayıcıdan fotoğraf yükleyip binary portresini oluşturması ve PNG olarak indirmesi.
-
-Web uygulamasında fotoğraf sunucuya gönderilmez; mümkün olduğunca tüm görüntü işleme kullanıcının tarayıcısında yapılır.
+Projenin mevcut kullanım alanı Python CLI aracıdır. Web uygulaması planlanan sonraki geliştirme aşamasıdır. Web sürümünde fotoğrafın sunucuya gönderilmeden tarayıcıda işlenmesi hedeflenir.
 
 ---
 
 ## 1. Sistem Yapısı
 
-Python ve web tarafı aynı ürünün iki farklı kullanım alanıdır.
-
-- Python tarafı yerel görüntü işleme ve PNG çıktısı üretir.
-- Web tarafı fotoğrafı tarayıcıda işler, sonucu önizler ve indirme olanağı sunar.
-- Kullanıcı hesabı, veritabanı veya fotoğraf saklama sistemi bulunmaz.
-- Web uygulaması bir sunucuya fotoğraf yüklemeyi gerektirmez.
-
-Web tarafındaki teknik uygulama yöntemi, kalite ve performans denemeleri sonucunda kesinleştirilecektir.
+Mevcut Python CLI yerel görüntü işleme ve PNG çıktısı üretir. Web uygulaması geliştirildiğinde aynı temel dönüşüm kurallarının tarayıcı tarafında uygulanması hedeflenir. Kullanıcı hesabı, veritabanı veya fotoğraf saklama sistemi mevcut kapsamda değildir.
 
 ## 2. Görüntü İşleme ve Çıktı Kalitesi
 
 Projenin en önemli kalite ölçütü, dönüştürülen portrenin kaynak fotoğraftaki temel detayları mümkün olduğunca korumasıdır.
 
-Dikkat edilecek noktalar:
+Dönüşüm sırasında dikkat edilecek noktalar:
 
 - Fotoğrafın doğru şekilde okunması ve hazırlanması.
 - Görüntünün gri tonlamaya dönüştürülmesi.
@@ -38,12 +26,13 @@ Dikkat edilecek noktalar:
 - Görüntünün karakter ızgarasına küçültülmesi sırasında detay kaybının azaltılması.
 - Oluşturulan portrenin PNG olarak indirilebilmesi.
 
-Karakterlerin açık ve koyu tonları nasıl temsil edeceği, PNG çıktısında kullanılan fontla tutarlı olmalıdır. Görsel kalite, aynı kaynak fotoğraf ve aynı ayarlarla yapılan karşılaştırmalar üzerinden değerlendirilmelidir.
+Karakterlerin açık ve koyu tonları nasıl temsil edeceği, PNG çıktısında kullanılan fontla tutarlı olmalıdır. Görsel kalite, farklı ışık koşulları ve detay seviyelerine sahip aynı örnek fotoğraflar üzerinde, aynı ayarlar kullanılarak karşılaştırılmalıdır.
 
 ## 3. Performans, Güvenlik ve Gizlilik
 
-- Görüntü işleme makul sürede tamamlanmalıdır.
+- Görüntü işleme, desteklenen görsel boyutlarında makul sürede tamamlanmalıdır.
 - Büyük fotoğraflar işlenmeden önce uygun boyuta indirilebilmelidir.
+- Desteklenen en yüksek dosya ve görsel boyutları, gerçek uygulama davranışı doğrulandıktan sonra belgelenmelidir.
 - Desteklenmeyen veya bozuk dosyalarda kullanıcıya anlaşılır hata mesajı gösterilmelidir.
 - Web tarafında fotoğraflar sunucuya gönderilmemeli ve kalıcı olarak saklanmamalıdır.
 - Kullanıcı dosyaları gereksiz yere bellekte tutulmamalıdır.
@@ -53,17 +42,17 @@ Karakterlerin açık ve koyu tonları nasıl temsil edeceği, PNG çıktısında
 
 ## 4. Test ve Kod Kalitesi
 
-Geliştirme sırasında aşağıdaki alanlar kontrol edilmelidir:
+Testler geliştirme sürecinin parçası olmalıdır. Yeni bir görüntü işleme davranışı eklendiğinde ilgili testler de güncellenmelidir.
+
+Kontrol edilmesi gereken alanlar:
 
 - Farklı boyut ve formatlardaki fotoğrafların işlenmesi.
 - Bozuk veya desteklenmeyen dosyalarda hata yönetimi.
 - Çıktıda yalnızca `0` ve `1` karakterlerinin bulunması.
 - Floyd–Steinberg dithering çıktısının doğruluğu.
 - Karakter eşleme ve PNG çıktısının doğruluğu.
-- Web tarafında fotoğraf yükleme, önizleme ve indirme akışı.
-- Farklı ekran boyutlarında kullanılabilirlik.
-- Python ve web tarafındaki sonuçların görsel açıdan tutarlılığı.
-
-Mevcut Python modülleri için otomatik testler kullanılmaya devam edilmelidir. Web tarafı geliştirildiğinde ilgili testler de eklenmelidir.
+- CLI parametreleri ve hatalı parametrelerin ele alınması.
+- Web sürümü geliştirildiğinde fotoğraf yükleme, önizleme ve indirme akışı.
+- Web sürümü geliştirildiğinde Python ve tarayıcı çıktılarının görsel açıdan tutarlılığı.
 
 Kod okunabilir, modüler ve bakımı kolay olmalıdır. Projenin ölçeğini aşan mimari ve araçlardan kaçınılmalıdır.
